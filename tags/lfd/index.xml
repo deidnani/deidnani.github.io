@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>LFD on Beyond the Buzz</title>
+        <link>http://deidnani.github.io/tags/lfd/</link>
+        <description>Recent content in LFD on Beyond the Buzz</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Wed, 01 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/lfd/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Leveraging Natural Language</title>
+        <link>http://deidnani.github.io/p/leveraging-natural-language/</link>
+        <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/p/leveraging-natural-language/</guid>
+        <description>&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
+&lt;h3 id=&#34;why-do-we-want-to-use-language&#34;&gt;Why do we want to use language?&lt;/h3&gt;
+&lt;p&gt;Integrating Natural Language into robotic tasks can provide added convenience and interactivity for humans. For example, it can enable robotic tasks such as language-based navigation and object retrieval in which the robot is given prompts like &amp;ldquo;Get me a clean cup from the kitchen&amp;rdquo; and the robot must act accordingly.&lt;br&gt;
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/introduction.png&#34;
+	width=&#34;1147&#34;
+	height=&#34;529&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/introduction_hu599246d70d9369bbd751745c0a227530_409202_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/introduction_hu599246d70d9369bbd751745c0a227530_409202_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;216&#34;
+		data-flex-basis=&#34;520px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 1: An example of how a robot using language and current perception to produce an action ($a_t$)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Furthermore, language enables us to provide both high-level and low-level guidance. For example, rather than just telling the robot &amp;ldquo;Get me a clean cup from the kitchen&amp;rdquo; we can also tell it to &amp;ldquo;Go straight, then take a right, then walk straight to the kitchen counter and pick up the cup.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Additionally, language is information-rich since it adds flexibility. The user can decide how much information it wants to give and the agent must infer using the provided information along with the data it has already seen so far.&lt;/p&gt;
+&lt;p&gt;Finally, several tasks require language inputs. In addition to the language-based navigation application shown above, other tasks include translation, chat-based guidance, and question answering. 
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/questionAnswering.jpg&#34;
+	width=&#34;2667&#34;
+	height=&#34;1500&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/questionAnswering_hudc344a8671a4cb0773cc35ed6a3d9861_426049_480x0_resize_q75_box.jpg 480w, http://deidnani.github.io/p/leveraging-natural-language/images/questionAnswering_hudc344a8671a4cb0773cc35ed6a3d9861_426049_1024x0_resize_q75_box.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;177&#34;
+		data-flex-basis=&#34;426px&#34;
+	
+&gt;
+&lt;em&gt;Figure 2: An example of visual question answering, which combines computer vision with natural language processing.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;To apply natural language to various tasks in computer vision and robotics, we must first ground the input. &lt;strong&gt;Grounding&lt;/strong&gt; refers to mapping language-based inputs to robot or agent behavior. Grounding language to objects in the domain, actions the robot must take, and agent rewards are common examples of tasks revolving around this concept. However, grounding is an inherently hard problem since it involves understanding the underlying meaning of the language input. Since grounding is central to the success of language-based robots, it is often challenging to achieve high performance on language-based tasks.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/grounding.jpg&#34;
+	width=&#34;525&#34;
+	height=&#34;640&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/grounding_hu2b2ef60d909db22dc81767e5071a39e0_92099_480x0_resize_q75_box.jpg 480w, http://deidnani.github.io/p/leveraging-natural-language/images/grounding_hu2b2ef60d909db22dc81767e5071a39e0_92099_1024x0_resize_q75_box.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;82&#34;
+		data-flex-basis=&#34;196px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 3: An example of how grounding can be used to convert action phrases to executable actions.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;representation&#34;&gt;Representation&lt;/h2&gt;
+&lt;p&gt;To train our models on language, we must first convert the language input into a representation the computer can understand. The first step in this process is breaking the sentence so that the model can learn about the correlation between sentences in our dataset.&lt;/p&gt;
+&lt;h3 id=&#34;sequence-of-tokens&#34;&gt;Sequence of Tokens&lt;/h3&gt;
+&lt;p&gt;We often use a representation called &lt;strong&gt;sequence of tokens&lt;/strong&gt; to represent each sentence where &lt;strong&gt;token&lt;/strong&gt; refers to each element in the &lt;strong&gt;vocabulary&lt;/strong&gt; used by the model. Hence, the size of the vocabulary is depended upon the tokenization we choose to represent our inputs with. Some common choices include tokenization by individual words, by characters, and by Byte-Pair Encodings (BPE). For the sentence &lt;code&gt;Fetch me the vacuum cleaner&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;Fetch&amp;gt;&amp;lt; &amp;gt;&amp;lt;me&amp;gt;&amp;lt; &amp;gt;&amp;lt;the&amp;gt;&amp;lt; &amp;gt;&amp;lt;vacuum&amp;gt;&amp;lt; &amp;gt;&amp;lt;cleaner&amp;gt;&lt;/code&gt; corresponds to the tokenization by individual words.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;F&amp;gt;&amp;lt;e&amp;gt;&amp;lt;t&amp;gt;&amp;lt;c&amp;gt;&amp;lt;h&amp;gt;&amp;lt; &amp;gt;&amp;lt;m&amp;gt;&amp;lt;e&amp;gt;&amp;lt; &amp;gt;&amp;lt;t&amp;gt;&amp;lt;h&amp;gt;&amp;lt;e&amp;gt;&amp;lt; &amp;gt;&amp;lt;v&amp;gt;&amp;lt;a&amp;gt;&amp;lt;c&amp;gt;&amp;lt;u&amp;gt;&amp;lt;u&amp;gt;&amp;lt;m&amp;gt;&amp;lt; &amp;gt;&amp;lt;c&amp;gt;&amp;lt;l&amp;gt;&amp;lt;e&amp;gt;&amp;lt;a&amp;gt;&amp;lt;e&amp;gt;&amp;lt;r&amp;gt;&lt;/code&gt; corresponds to the tokenization by individual characters.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;lt;Fet&amp;gt;&amp;lt;ch&amp;gt;&amp;lt; &amp;gt;&amp;lt;me&amp;gt;&amp;lt; &amp;gt;&amp;lt;the&amp;gt;&amp;lt; &amp;gt;&amp;lt;va&amp;gt;&amp;lt;cu&amp;gt;&amp;lt;um&amp;gt;&amp;lt; &amp;gt;&amp;lt;clean&amp;gt;&amp;lt;er&amp;gt;&lt;/code&gt; correponds to the tokenization by Byte-Pair encodings.&lt;/p&gt;
+&lt;p&gt;Byte-Pair Encodings have been discovered to be the perfect middle ground between tokenization by characters and by words. The biggest advantage of using BPE is the breakdown of rare words into common tokens so that the model can still understand the meaning of the word by combing those tokens. The tokens used for BPE can either be derived from a predefined vocabulary such as the ones used by popular models today or can be created using the following algorithm:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;1. Initialize vocabulary with individual characters and sentences with character tokenization. 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;2. Iteratively count the frequency of each token pair in the current sentence tokenization.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;3. Merge every occurrence of the most frequent pair and the merged pair to the vocabulary.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;4. Repeat steps 2 and 3 till the desired vocabulary size is achieved.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;The next step in representing sentences is converting each token into an array of integers and/or floats which can be input into our model. The four common strategies for achieving this representation are dictionary indices, Word2Vec/GloVe, RNN/LSTM, and Transformers.&lt;/p&gt;
+&lt;h3 id=&#34;dictionary-indices&#34;&gt;Dictionary Indices&lt;/h3&gt;
+&lt;p&gt;Using dictionary indices is the easiest way of converting tokens into an array of floats. First, we order the words in our dictionary from &lt;code&gt;0 to the size of the dictionary - 1&lt;/code&gt;. Then, we use a one-hot vector of &lt;code&gt;length = size of dictionary&lt;/code&gt; to represent each token, where all elements are $0$ except the value at the token&amp;rsquo;s index in the dictionary, which contains a $1$. For example, if a dictionary contains 2000 elements and if the token &lt;code&gt;Machine&lt;/code&gt; is at the 342nd index in the dictionary, then its encoding will be an array of length 2000 containing 0s at all places except 1 at the 342nd index.&lt;/p&gt;
+&lt;h3 id=&#34;word2vec-and-glove&#34;&gt;Word2Vec and GloVe&lt;/h3&gt;
+&lt;p&gt;A one-hot vector for each token is impractical because our dictionary can have thousands of tokens. Word2Vec and GloVe are two common ways of converting one-hot vector representation of tokens to a smaller dimensional vector. 
+&lt;strong&gt;Word2Vec&lt;/strong&gt; refers to a group of shallow $2$-layer neural nets that can be used to create these smaller dimensional vectors. The neural nets can either use a continuous bag-of-words architecture or a continuous skip-gram architecture. Both models have a hidden layer that can be used after training to get word embedding. The continuous bag-of-words architecture refers to a feed-forward model that uses surrounding words to predict the next word. The skip-gram architecture on the other hand uses the current word to predict surrounding words.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/skipGram.png&#34;
+	width=&#34;815&#34;
+	height=&#34;454&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/skipGram_hu169f1368e1c8a388003d7fcbaa0abc8e_13039_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/skipGram_hu169f1368e1c8a388003d7fcbaa0abc8e_13039_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;179&#34;
+		data-flex-basis=&#34;430px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 4: Bag-of-Words and Skip-Gram architectures used for Word2Vec&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;GloVe&lt;/strong&gt; also known as Global Vectors is an unsupervised algorithm for obtaining smaller dimensional vector representations. Global word-word co-occurrence statistics are first extracted from a training corpus and then a log-bilinear regression model is trained. The regression model combines global matrix factorization and local context window methods.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/glove.png&#34;
+	width=&#34;958&#34;
+	height=&#34;528&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/glove_hu4e44d0ae1fc07ca43fbf1ad2dc09c40d_41775_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/glove_hu4e44d0ae1fc07ca43fbf1ad2dc09c40d_41775_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;181&#34;
+		data-flex-basis=&#34;435px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 5: Comparison of GloVe embeddings on different words. Values are normalized between $1$ (blue) and $-1$ (red).&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;One of the most important qualities of both embeddings is that they preserve similarity between different sentences that have the same meaning.&lt;/p&gt;
+&lt;h3 id=&#34;rnnlstm&#34;&gt;RNN/LSTM&lt;/h3&gt;
+&lt;p&gt;Long-Short Term Memory (LSTM) models, which are a special type of Recurrent Neural Networks, can also be used to create vector representation of tokens. Additionally, they can also be used to create a vector representation of the whole sentence. 
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/lstm.png&#34;
+	width=&#34;2014&#34;
+	height=&#34;1322&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/lstm_hu6bee907bb3498980c7db25301095e2a4_191690_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/lstm_hu6bee907bb3498980c7db25301095e2a4_191690_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;152&#34;
+		data-flex-basis=&#34;365px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 6: A diagram of the internal structure of an LSTM cell. The model typically consists of several such cells with either weight shared. During training, the outputs from the current cell become the input into the next cell.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The hidden vector $h_t$ corresponds to the vector representation of each token while the last context vector $c_t$ corresponds to the vector representation of the whole sentence after training. LSTMs for vector representations are typically trained in an end-to-end fashion alongside the primary task.&lt;/p&gt;
+&lt;h3 id=&#34;transformer&#34;&gt;Transformer&lt;/h3&gt;
+&lt;p&gt;The Transformer is the current state-of-the-art model not only for encoding sentences but also grounding language in general. Transformers are particularly powerful because of multi-head self-attention which allows them to weigh different subsets of the input simultaneously.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/transformer.png&#34;
+	width=&#34;1999&#34;
+	height=&#34;1151&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/transformer_hufe8d0a8591c0916acc1939d299069572_376109_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/transformer_hufe8d0a8591c0916acc1939d299069572_376109_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;173&#34;
+		data-flex-basis=&#34;416px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 7: Model Architecture of the Transformer&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Today, Transformers are being applied to a variety of tasks, from NLP-oriented translation and text summarization tasks to multimodal objectives such as visual question answering and navigation. Transformers can be easily modified to take in multimodal inputs by modifying the input and output embedding layers to process images using CNNs. Image embeddings can then be concatenated with token embeddings to get a frame-by-frame multimodal embedding of the task.&lt;/p&gt;
+&lt;h2 id=&#34;unifying-task-language-data&#34;&gt;Unifying task-language data&lt;/h2&gt;
+&lt;p&gt;One example of how language data can help in executing a certain task was outlined in the Action2Vec framework that combined language data with videos.
+The framework did the following:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create embeddings from video frames using a CNN&lt;/li&gt;
+&lt;li&gt;Embed features extracted from CNN into a single vector using an LSTM&lt;/li&gt;
+&lt;li&gt;Similarly, for words, create embeddings from words using Word2Vec and embed features extracted into a single vector using an LSTM or a pooling operation (avg/max pooling)&lt;/li&gt;
+&lt;li&gt;Use a Pairwise Ranking Loss that takes these dense vectors and makes sure that words and videos that share the same concepts have similar embeddings and different words and videos have different embeddings&lt;/li&gt;
+&lt;li&gt;Once, these embeddings are created, we can perform &amp;ldquo;arithmetic&amp;rdquo; on these embeddings. For example below, we take the embeddings for frames of a person playing piano and we try to create a video that shows a person playing a &amp;ldquo;violin&amp;rdquo; instead of a &amp;ldquo;piano&amp;rdquo;. This can be done by getting the mean Action2Vec embeddings for videos corresponding to piano playing, subtracting the Word2Vec embedding for &amp;ldquo;piano&amp;rdquo;, adding the Word2Vec embedding for &amp;ldquo;violin&amp;rdquo;, and searching the Action2Vec embedding space for all frames that are similar to the resulting vector. 
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/Action2Vec.png&#34;
+	width=&#34;853&#34;
+	height=&#34;309&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/Action2Vec_hu758e0a971cc05d02657e5eaf25e80874_116816_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/Action2Vec_hu758e0a971cc05d02657e5eaf25e80874_116816_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;276&#34;
+		data-flex-basis=&#34;662px&#34;
+	
+&gt;
+&lt;em&gt;Figure 8: Model Architecture of the Action2Vec Framework&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;structured-language-approaches&#34;&gt;Structured language approaches&lt;/h2&gt;
+&lt;h3 id=&#34;what-is-structured-language&#34;&gt;What is structured language?&lt;/h3&gt;
+&lt;p&gt;Structured language involves directly mapping words to concepts that the robot already knows. This is done by parsing the word sequence and tagging each word with its semantic purpose. These parsed sequences are mapped to pre-made logical primitives that the robot can interpret. One way these logical primitives can be represented is through linear temporal logic (LTL) specification. Also, this structured language approach requires a decent amount of overhead since the robot already needs to completely know all the actions available to it as well as the direct mapping from words to those actions.&lt;/p&gt;
+&lt;p&gt;As shown in figure 9, an example approach involves:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Tagging and parsing - Assigning a hierarchical structure to a sentence&lt;/li&gt;
+&lt;li&gt;Null element restoration - Allows the structure of imperatives to be directly matched by a semantic interpretation module&lt;/li&gt;
+&lt;li&gt;VerbNet frame matching - Identifies verbs and their arguments in parse trees using VerbNet&lt;/li&gt;
+&lt;li&gt;LTL Formula Generation - Maps to existing logical primitive&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/ltl.png&#34;
+	width=&#34;1247&#34;
+	height=&#34;246&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/ltl_hue9626b3da46b4f9b03fb952da34abc76_98760_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/ltl_hue9626b3da46b4f9b03fb952da34abc76_98760_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;506&#34;
+		data-flex-basis=&#34;1216px&#34;
+	
+&gt;
+&lt;em&gt;Figure 9: Conversion of the sentence &amp;ldquo;Go to the hallway&amp;rdquo; into LTL formulas through tagging, parsing, null element restoration, semantic interpretation, and LTL formula generation&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Although expensive to develop, this structure allows humans to directly inspect generated plans. This means that the system has guarantees and is verifiable. It is also simple to diagnose failures since researchers can investigate contradictions in planned behaviors.&lt;/p&gt;
+&lt;h3 id=&#34;advantages--disadvantages&#34;&gt;Advantages &amp;amp; Disadvantages&lt;/h3&gt;
+&lt;h4 id=&#34;advantages&#34;&gt;Advantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Generalization:
+&lt;ul&gt;
+&lt;li&gt;It is possible to ensure that commands map directly to task executions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Interpretability:
+&lt;ul&gt;
+&lt;li&gt;Researches can directly analyze task executions to the language since it is human-readable&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Failure analysis:
+&lt;ul&gt;
+&lt;li&gt;It is easy to debug since one can directly trace out the plans and language commands to resolve issues&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;disadvantages&#34;&gt;Disadvantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Brittle:
+&lt;ul&gt;
+&lt;li&gt;The wording for the actions has to be very exact meaning the researcher need to memorize the wording for all the actions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Expertise Required:
+&lt;ul&gt;
+&lt;li&gt;Non-experts may have difficulties creating logic primitives and connecting them to corresponding sentence parses&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Ambiguity:
+&lt;ul&gt;
+&lt;li&gt;The speaker needs to be exact in wording and not give under-specified commands (ex. “leave” instead of “leave the room”)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;low-level-language-task-alignment&#34;&gt;Low-level language-task alignment&lt;/h2&gt;
+&lt;h3 id=&#34;policy-sketches&#34;&gt;Policy Sketches&lt;/h3&gt;
+&lt;p&gt;Policy sketches involve having low-level planners for each specific task and then having a high-level model that activates these sub-components to complete the full action. This includes training an overarching network that can understand a full task specification and then will use existing sub-policies when needed. 
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/policySketches.png&#34;
+	width=&#34;1181&#34;
+	height=&#34;359&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/policySketches_huac224bd8b6b28dc3e3a0c1639a4726ef_347377_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/policySketches_huac224bd8b6b28dc3e3a0c1639a4726ef_347377_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;328&#34;
+		data-flex-basis=&#34;789px&#34;
+	
+&gt;
+&lt;em&gt;Figure 10: The figure shows an example approach where simplified versions of two tasks (make planks and make sticks) and a model overview of the sub-policies&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;As shown in figure 10, the subtasks (ex. $b_1$ which is &amp;ldquo;get wood&amp;rdquo; ) are represented by a unique policy ($\pi_i$); however, the high-level planner can active these components when necessary to make a full plan. In this approach, the high-level model deals with mapping language to sub-policies, and the low-level planners deal with executing action necessary for the sub-task. By using a more hierarchal approach, this approach avoids having to design a single end-to-end network deal with the entire process of converting language to desired actions.&lt;/p&gt;
+&lt;h4 id=&#34;advantages--disadvantages-1&#34;&gt;Advantages &amp;amp; Disadvantages&lt;/h4&gt;
+&lt;h5 id=&#34;advantages-1&#34;&gt;Advantages&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Generalization:
+&lt;ul&gt;
+&lt;li&gt;It is possible to recombine existing policies to produce new behaviors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Learned task models:
+&lt;ul&gt;
+&lt;li&gt;Since it uses a learning approach, there is less developmental overhead and can be less brittle than structured language&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Differentiable:
+&lt;ul&gt;
+&lt;li&gt;Able to learn task execution without needing an expert to specify logical plans&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&#34;disadvantages-1&#34;&gt;Disadvantages&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt;Brittle:
+&lt;ul&gt;
+&lt;li&gt;Policies are still triggered with pre-specified words used during training&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Plans required:
+&lt;ul&gt;
+&lt;li&gt;The developers must create new behaviors and know how to combine explicit words to produce behaviors&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;reward-functions&#34;&gt;Reward Functions&lt;/h3&gt;
+&lt;p&gt;One way to reduce interaction time with the environment is to use reward shaping by designing a reward function that provides the agent intermediate rewards for progress towards the goal. Designing a good reward function can be very difficult, expensive, and time-consuming; however, one way to address this problem is by using language instructions to perform reward shaping. This reward function approach mainly involves mapping language to state and action in the world to determine if they are related. This can be done using a framework like LEARN which maps language to rewards based on the agent&amp;rsquo;s actions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/learn.png&#34;
+	width=&#34;477&#34;
+	height=&#34;400&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/learn_hu88c3dc19022e8ad337c3f270c9cb8f37_97513_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/learn_hu88c3dc19022e8ad337c3f270c9cb8f37_97513_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;119&#34;
+		data-flex-basis=&#34;286px&#34;
+	
+&gt;
+&lt;em&gt;Figure 11: Example framework which involves training LEARN module and using its intermediate rewards to assist within the agent-environment loop.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Figure 11 shows an example pipeline of producing a reward function from labeled random trajectories. Its main steps involve:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Gather a dataset of labeled trajectories (sequence of past actions)&lt;/li&gt;
+&lt;li&gt;Align trajectory information to language commands or prompts
+&lt;ul&gt;
+&lt;li&gt;Basically, the labelers can explain what they see or say the commands that would have led to that behavior. (&amp;ldquo;Jump over the skull while going left&amp;rdquo;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Learn to associate the collected language commands and trajectories (ex. LEARN)&lt;/li&gt;
+&lt;li&gt;If the resultant trajectory correctly corresponds to the language sequence, a positive reward is given (Language reward)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;advantages--disadvantages-2&#34;&gt;Advantages &amp;amp; Disadvantages&lt;/h3&gt;
+&lt;h4 id=&#34;advantages-2&#34;&gt;Advantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Generalization:
+&lt;ul&gt;
+&lt;li&gt;Learning from human-created language prompts.&lt;/li&gt;
+&lt;li&gt;Provide new utterances and map them to new trajectories/plans.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Single model:
+&lt;ul&gt;
+&lt;li&gt;Do not need to activate relevant policies&lt;/li&gt;
+&lt;li&gt;One agent deals with learning the entire mapping&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Grounding is implicit:
+&lt;ul&gt;
+&lt;li&gt;Do not need to manually label the environment or actions&lt;/li&gt;
+&lt;li&gt;The model automatically learns the relationship between words to actions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;disadvantages-2&#34;&gt;Disadvantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Data collection:
+&lt;ul&gt;
+&lt;li&gt;Have to collect a LOT of labeled data for learning&lt;/li&gt;
+&lt;li&gt;It is also difficult for a human to guide the training afterward&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Training time:
+&lt;ul&gt;
+&lt;li&gt;Whenever new behavior with language needs to be added, the model needs to be fine-tuned before the behavior can be produced.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Single model:
+&lt;ul&gt;
+&lt;li&gt;Learning for multiple, unrelated tasks might be extremely difficult&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;high-level-language-task-alignment&#34;&gt;High-level language-task alignment&lt;/h2&gt;
+&lt;h3 id=&#34;what-are-high-level-tasks&#34;&gt;What are High-level Tasks?&lt;/h3&gt;
+&lt;p&gt;In high-level language-task alignment, we focus on giving the agent more complex and &amp;ldquo;abstract&amp;rdquo; instructions, such as &amp;ldquo;go to the library&amp;rdquo;, compared to policy sketches which would use commands such as &amp;ldquo;go forwards, go left, go forwards, go right&amp;rdquo; where we have to explicitly lay out the subtasks for the agent. Note that such high-level tasks usually consist of a sequence of simple actions (known as primitives) or these actions associated in some hierarchical manner. Unlike the methods above, the agent, here, has to learn subtasks that need to be performed to complete the high-level task and has to learn how to complete each subtask.&lt;/p&gt;
+&lt;h3 id=&#34;imitating-interactive-intelligence&#34;&gt;Imitating Interactive Intelligence&lt;/h3&gt;
+&lt;p&gt;We look at Imitating Interactive Intelligence, a paper published by DeepMind in 2020 to better understand how agents can learn high-level language-task alignment. 
+The paper involved two agents in a simulated bedroom as the environment that tried to learn from the demonstrations provided:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;one that would provide tasks to be performed (known as the setter)
+&lt;ul&gt;
+&lt;li&gt;The setter would create a language command based on the interaction and prompt provided by the environment.&lt;/li&gt;
+&lt;li&gt;The interaction was the type of general task to be performed (ex: Instruction, Q&amp;amp;A).&lt;/li&gt;
+&lt;li&gt;The prompt was used by the environment to specify the type of interaction to be performed (ex: for Q&amp;amp;A, the prompt specified whether the question should ask the count, color, location, or position of an object)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;one that would perform the task created by the setter (known as the solver).
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/iii_relationships.png&#34;
+	width=&#34;714&#34;
+	height=&#34;445&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/iii_relationships_huc823c259c96ce942146f3257b925ade2_100400_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/iii_relationships_huc823c259c96ce942146f3257b925ade2_100400_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;385px&#34;
+	
+&gt;
+&lt;em&gt;Figure 12: Relationship between Interactions, Prompts, and Instructions Created&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;how-are-the-agents-trained&#34;&gt;How are the agents trained?&lt;/h3&gt;
+&lt;h4 id=&#34;general-process-of-training&#34;&gt;General Process of Training&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Gather human demonstrations&lt;/li&gt;
+&lt;li&gt;Apply Behavior Cloning to demonstrations and learn policy from learned reward model through Forward RL to create agent policies&lt;/li&gt;
+&lt;li&gt;Apply GAIL to create a reward model from the policy created and demonstrations provided&lt;/li&gt;
+&lt;li&gt;Repeat steps 2. and 3. until the solver can complete tasks that are created by the setter.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;using-behavior-cloning-bc-to-create-policies&#34;&gt;Using Behavior Cloning (BC) to Create Policies&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;First, the authors took the image data from the simulated environment and passed it through a ResNet (a popular CNN architecture to understand images) to create the image embeddings.&lt;/li&gt;
+&lt;li&gt;Similarly, the authors took text data from the prompts provided by the environment, previous language policies generated, and communication between the agents and they tokenized it to create textual embeddings.&lt;/li&gt;
+&lt;li&gt;Next, the authors combined these embeddings and passed them through a multimodal transformer, as transformers have been proven to work well for vision-and-language tasks (ex: VILBERT, CLIP, etc).&lt;/li&gt;
+&lt;li&gt;The outputs of the transformer would be lastly passed to an LSTM which would produce an autoregressive sequence of actions (meaning that actions depend on previous actions) that are needed to be performed to complete the task as well as any words to output.&lt;/li&gt;
+&lt;li&gt;These policies are trained to match the demonstrator&amp;rsquo;s policies via Behavior Cloning. 
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/bc_model.png&#34;
+	width=&#34;1157&#34;
+	height=&#34;406&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/bc_model_hu8b42d655e5dfc3771f5b339d4d302fca_139511_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/bc_model_hu8b42d655e5dfc3771f5b339d4d302fca_139511_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;284&#34;
+		data-flex-basis=&#34;683px&#34;
+	
+&gt;
+&lt;em&gt;Figure 13: Model Architecture for using BC to Create Policies from Image and Language Data&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;using-inverse-reinforcement-learning-irl-to-create-reward-model&#34;&gt;Using Inverse Reinforcement Learning (IRL) to create Reward Model&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Note that the Reward model similarly receives its inputs to the Policy model above: by using image and text data, converting these modalities of data into embeddings, fusing these embeddings, and using a multimodal transformer to understand the fused embeddings.&lt;/li&gt;
+&lt;li&gt;The discriminator loss is used similarly as GAIL: to determine whether the trajectories were produced by the agent or if they were sampled from the demonstrations produced by experts.&lt;/li&gt;
+&lt;li&gt;As GAIL is difficult to use with high-dimensional data, the authors also use multiple strategies outlined below to make GAIL effective for the setup chosen such as random image augmentation (ex: cropping, rotating, translating images), language matching, and object-in-view.&lt;/li&gt;
+&lt;li&gt;The authors employed language matching as an auxiliary task for representation learning that checks whether the instruction created by the setter and the images inputted come from the same episode or not. This would require the ResNet to produce embeddings that have a high degree of mutual information with the tokenized inputs.&lt;/li&gt;
+&lt;li&gt;The authors employed object-in-view as another auxiliary task for representation learning that asks the agent to predict whether a certain object is in the image data provided to the agent or not. This requires the ResNet to produce embeddings that reflect the objects present in the image data.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/irl_model.png&#34;
+	width=&#34;1082&#34;
+	height=&#34;325&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/irl_model_hu56056958688c966440392f206e5612ab_68793_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/irl_model_hu56056958688c966440392f206e5612ab_68793_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;332&#34;
+		data-flex-basis=&#34;799px&#34;
+	
+&gt;
+&lt;em&gt;Figure 14: Model Architecture for using IRL to Create Reward Models from Image and Language Data&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;In study A below, the authors found that using behavior cloning and GAIL was more effective than simply learning behavior cloning and not learning the reward model for tasks that required following instructions. However, using GAIL to learn a reward model did not seem to significantly boost performance for question-answering tasks.
+&lt;ul&gt;
+&lt;li&gt;This is because GAIL can help the agent understand what a task truly means, which is helpful for instruction following, while behavior cloning can not.&lt;/li&gt;
+&lt;li&gt;On the other hand, behavior cloning can simply mimic the mapping from questions to answers that the demonstrator uses so it tends to be as effective as using behavior cloning and GAIL for Q&amp;amp;A tasks.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;In study B below, the authors also found that for a given task, such as finding the count of a certain object in a room, using data for other tasks for training, such as finding the position/color of an object, led to better performance over limiting the training data to only include demonstrations that directly corresponded to the task that was to be performed.
+&lt;ul&gt;
+&lt;li&gt;This is because more diverse data and seemingly unrelated commands allow tasks to inform each other (due to some crossover), allows the agent to better understand the language of the commands it receives, and how this language is grounded in the environment.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Study C shows that this phenomenon also helps with data efficiency; when trained with all types of prompts, the model only needed 1/8th as much data as training with only the &amp;ldquo;Position&amp;rdquo; prompt to reach the same level of performance.&lt;/li&gt;
+&lt;li&gt;Study D similarly shows object-color generalization capabilities as the model was able to sufficiently perform tasks dealing with orange ducks such as &amp;ldquo;lift an orange duck&amp;rdquo; even when all instances of orange ducks were removed from the dataset.
+&lt;img src=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/iii_studies.png&#34;
+	width=&#34;770&#34;
+	height=&#34;640&#34;
+	srcset=&#34;http://deidnani.github.io/p/leveraging-natural-language/images/iii_studies_hu92f176062201b8cdf5138191578bd086_110739_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/leveraging-natural-language/images/iii_studies_hu92f176062201b8cdf5138191578bd086_110739_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;120&#34;
+		data-flex-basis=&#34;288px&#34;
+	
+&gt;
+&lt;em&gt;Figure 15: Graphs for some of the studies performed by the authors (described in detail above)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;advantages--disadvantages-3&#34;&gt;Advantages &amp;amp; Disadvantages&lt;/h3&gt;
+&lt;h4 id=&#34;advantages-3&#34;&gt;Advantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Generalization:
+&lt;ul&gt;
+&lt;li&gt;Language commands learned are general and compositional&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Large Multi-Task Model:
+&lt;ul&gt;
+&lt;li&gt;Agents do not need to learn sub-policies.&lt;/li&gt;
+&lt;li&gt;They can simply learn a set of behaviors that can be used for a variety of tasks&lt;/li&gt;
+&lt;li&gt;These behaviors also inform each other, leading to better performance for any task when compared to using a single-task approach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Production of Language:
+&lt;ul&gt;
+&lt;li&gt;Agents are not only able to understand the language commands but are also able to produce them&lt;/li&gt;
+&lt;li&gt;Such an ability may allow the agent to explain itself&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;disadvantages-3&#34;&gt;Disadvantages&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Data Collection and Complex Training Strategies:
+&lt;ul&gt;
+&lt;li&gt;This paper required 2+ years of data collection in a complex simulator that required 2 demonstrators interacting.&lt;/li&gt;
+&lt;li&gt;Due to the expensiveness of the data collection, this paper is rather difficult to reproduce.&lt;/li&gt;
+&lt;li&gt;Also, the complex tricks required may mean that the results are limited to the environment that the authors have set up and the constrained vocabulary (~550 unique words) that they are using&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Independent Training:
+&lt;ul&gt;
+&lt;li&gt;Agent cannot actively ask for help on new problems.&lt;/li&gt;
+&lt;li&gt;For example, the agent cannot ask to see more data on tasks that it has not been asked to perform before or on objects that it has not seen before&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Cannot Quickly Acquire New Knowledge:
+&lt;ul&gt;
+&lt;li&gt;Since many data points are required and a high amount of compute is necessary for training, it is difficult for the model to learn new tasks or to gain new insights quickly, as this would require more data points for those tasks and the model would have to be re-trained from scratch.&lt;/li&gt;
+&lt;li&gt;In other words, it is &amp;ldquo;set&amp;rdquo;.
+Future Research Directions&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;Methods to learn from language that is representative of experiences in the &amp;ldquo;real world&amp;rdquo;, rather than using language that is crawled from the Internet
+&lt;ul&gt;
+&lt;li&gt;Ground language in task execution and objects in the environment and use language is taken directly from humans, rather than just using tweets from Twitter or posts on Reddit&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Learning to use language for Active Learning
+&lt;ul&gt;
+&lt;li&gt;Creating capabilities for the agent to ask for assistance, clarification, or to remove ambiguities using language, rather than just using offline learning that often requires many data points&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Creating efficient systems of NLP + RL
+&lt;ul&gt;
+&lt;li&gt;Creating a model that can efficiently learn new tasks and knowledge beyond its existing knowledge base in an efficient manner&lt;/li&gt;
+&lt;li&gt;Also, agents must learn to think and act quickly to be used in real-world situations where language instructions are given constantly&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Learning interactively
+&lt;ul&gt;
+&lt;li&gt;Creating capabilities for the agent to ask for more demonstrations on a certain task or other forms of assistance so that the agent is more involved in the learning process (more like &amp;ldquo;situated learning&amp;rdquo;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Using Audio Data
+&lt;ul&gt;
+&lt;li&gt;Audio data has previously not been used due to its high dimensionality.&lt;/li&gt;
+&lt;li&gt;However, acoustics can influence the meaning of commands; for example, giving a command in a sarcastic tone is quite different from giving it in an urgent tone&lt;/li&gt;
+&lt;li&gt;Also, the volume and duration of the acoustics could indicate whether the agent is receiving the command or whether the command was intended for someone else (allows the agent to learn from noisy commands, which typically occurs in the real world)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;key-takeaways&#34;&gt;Key Takeaways&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Using language can help solve agents solve many tasks but it remains difficult due to the problem of grounding the input.&lt;/li&gt;
+&lt;li&gt;There are several representations we can use for language such as sequences of tokens, dictionary indices, Word2Vec, GloVe, RNNs, LSTMs, and Transformers, with each representation having its advantages and disadvantages.&lt;/li&gt;
+&lt;li&gt;To unify task-learning and language for LfD, there are three main approaches we discussed: structure language approaches, low-level language-task alignment, and high-level language-task alignment (note that each approach is more complex yet more applicable in the real world than the previous).&lt;/li&gt;
+&lt;li&gt;Leveraging natural language is still an open area of research with current approaches trying to leverage audio or trying to make these approaches more interactive, efficient, and applicable in the real world.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

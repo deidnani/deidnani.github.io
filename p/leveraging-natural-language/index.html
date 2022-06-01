@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='A brief summary of different approaches of using natural language to ground learning from demonstration'><title>Leveraging Natural Language</title>
+
+<link rel='canonical' href='http://deidnani.github.io/p/leveraging-natural-language/'>
+
+<link rel="stylesheet" href="/scss/style.min.450926226e724574a6b936335ea06111f8aeb253d932c86cb2cc807341cd2889.css"><meta property='og:title' content='Leveraging Natural Language'>
+<meta property='og:description' content='A brief summary of different approaches of using natural language to ground learning from demonstration'>
+<meta property='og:url' content='http://deidnani.github.io/p/leveraging-natural-language/'>
+<meta property='og:site_name' content='Beyond the Buzz'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='NLP' /><meta property='article:tag' content='LFD' /><meta property='article:tag' content='RL' /><meta property='article:published_time' content='2022-06-01T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-06-01T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Leveraging Natural Language">
+<meta name="twitter:description" content="A brief summary of different approaches of using natural language to ground learning from demonstration">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/buzz_huf3e2923fc74d856fe9e9781dcbe93242_15437_300x0_resize_box_3.png" width="300"
+                            height="270" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Beyond the Buzz</a></h1>
+            <h2 class="site-description">A blog dedicated to exploring AI beyond the many buzzwords that have become commonplace in resumes today</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/deidnani'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.linkedin.com/in/rajeidnani/'
+                        target="_blank"
+                        title="LinkedIn"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+   <line x1="8" y1="11" x2="8" y2="16"></line>
+   <line x1="8" y1="8" x2="8" y2="8.01"></line>
+   <line x1="12" y1="16" x2="12" y2="11"></line>
+   <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
+</svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/literature-review/" style="background-color: #2a9d8f; color: #fff;">
+                Literature Review
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/leveraging-natural-language/">Leveraging Natural Language</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            A brief summary of different approaches of using natural language to ground learning from demonstration
+        </h3>
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 01, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    19 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="motivation">Motivation</h2>
+<h3 id="why-do-we-want-to-use-language">Why do we want to use language?</h3>
+<p>Integrating Natural Language into robotic tasks can provide added convenience and interactivity for humans. For example, it can enable robotic tasks such as language-based navigation and object retrieval in which the robot is given prompts like &ldquo;Get me a clean cup from the kitchen&rdquo; and the robot must act accordingly.<br>
+<img src="/p/leveraging-natural-language/images/introduction.png"
+	width="1147"
+	height="529"
+	srcset="/p/leveraging-natural-language/images/introduction_hu599246d70d9369bbd751745c0a227530_409202_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/introduction_hu599246d70d9369bbd751745c0a227530_409202_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="216"
+		data-flex-basis="520px"
+	
+></p>
+<p><em>Figure 1: An example of how a robot using language and current perception to produce an action ($a_t$)</em></p>
+<p>Furthermore, language enables us to provide both high-level and low-level guidance. For example, rather than just telling the robot &ldquo;Get me a clean cup from the kitchen&rdquo; we can also tell it to &ldquo;Go straight, then take a right, then walk straight to the kitchen counter and pick up the cup.&rdquo;</p>
+<p>Additionally, language is information-rich since it adds flexibility. The user can decide how much information it wants to give and the agent must infer using the provided information along with the data it has already seen so far.</p>
+<p>Finally, several tasks require language inputs. In addition to the language-based navigation application shown above, other tasks include translation, chat-based guidance, and question answering. 
+<img src="/p/leveraging-natural-language/images/questionAnswering.jpg"
+	width="2667"
+	height="1500"
+	srcset="/p/leveraging-natural-language/images/questionAnswering_hudc344a8671a4cb0773cc35ed6a3d9861_426049_480x0_resize_q75_box.jpg 480w, /p/leveraging-natural-language/images/questionAnswering_hudc344a8671a4cb0773cc35ed6a3d9861_426049_1024x0_resize_q75_box.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+>
+<em>Figure 2: An example of visual question answering, which combines computer vision with natural language processing.</em></p>
+<h2 id="introduction">Introduction</h2>
+<p>To apply natural language to various tasks in computer vision and robotics, we must first ground the input. <strong>Grounding</strong> refers to mapping language-based inputs to robot or agent behavior. Grounding language to objects in the domain, actions the robot must take, and agent rewards are common examples of tasks revolving around this concept. However, grounding is an inherently hard problem since it involves understanding the underlying meaning of the language input. Since grounding is central to the success of language-based robots, it is often challenging to achieve high performance on language-based tasks.
+<img src="/p/leveraging-natural-language/images/grounding.jpg"
+	width="525"
+	height="640"
+	srcset="/p/leveraging-natural-language/images/grounding_hu2b2ef60d909db22dc81767e5071a39e0_92099_480x0_resize_q75_box.jpg 480w, /p/leveraging-natural-language/images/grounding_hu2b2ef60d909db22dc81767e5071a39e0_92099_1024x0_resize_q75_box.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="82"
+		data-flex-basis="196px"
+	
+></p>
+<p><em>Figure 3: An example of how grounding can be used to convert action phrases to executable actions.</em></p>
+<h2 id="representation">Representation</h2>
+<p>To train our models on language, we must first convert the language input into a representation the computer can understand. The first step in this process is breaking the sentence so that the model can learn about the correlation between sentences in our dataset.</p>
+<h3 id="sequence-of-tokens">Sequence of Tokens</h3>
+<p>We often use a representation called <strong>sequence of tokens</strong> to represent each sentence where <strong>token</strong> refers to each element in the <strong>vocabulary</strong> used by the model. Hence, the size of the vocabulary is depended upon the tokenization we choose to represent our inputs with. Some common choices include tokenization by individual words, by characters, and by Byte-Pair Encodings (BPE). For the sentence <code>Fetch me the vacuum cleaner</code>:</p>
+<p><code>&lt;Fetch&gt;&lt; &gt;&lt;me&gt;&lt; &gt;&lt;the&gt;&lt; &gt;&lt;vacuum&gt;&lt; &gt;&lt;cleaner&gt;</code> corresponds to the tokenization by individual words.</p>
+<p><code>&lt;F&gt;&lt;e&gt;&lt;t&gt;&lt;c&gt;&lt;h&gt;&lt; &gt;&lt;m&gt;&lt;e&gt;&lt; &gt;&lt;t&gt;&lt;h&gt;&lt;e&gt;&lt; &gt;&lt;v&gt;&lt;a&gt;&lt;c&gt;&lt;u&gt;&lt;u&gt;&lt;m&gt;&lt; &gt;&lt;c&gt;&lt;l&gt;&lt;e&gt;&lt;a&gt;&lt;e&gt;&lt;r&gt;</code> corresponds to the tokenization by individual characters.</p>
+<p><code>&lt;Fet&gt;&lt;ch&gt;&lt; &gt;&lt;me&gt;&lt; &gt;&lt;the&gt;&lt; &gt;&lt;va&gt;&lt;cu&gt;&lt;um&gt;&lt; &gt;&lt;clean&gt;&lt;er&gt;</code> correponds to the tokenization by Byte-Pair encodings.</p>
+<p>Byte-Pair Encodings have been discovered to be the perfect middle ground between tokenization by characters and by words. The biggest advantage of using BPE is the breakdown of rare words into common tokens so that the model can still understand the meaning of the word by combing those tokens. The tokens used for BPE can either be derived from a predefined vocabulary such as the ones used by popular models today or can be created using the following algorithm:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">1. Initialize vocabulary with individual characters and sentences with character tokenization. 
+</span></span><span class="line"><span class="cl">2. Iteratively count the frequency of each token pair in the current sentence tokenization.
+</span></span><span class="line"><span class="cl">3. Merge every occurrence of the most frequent pair and the merged pair to the vocabulary.
+</span></span><span class="line"><span class="cl">4. Repeat steps 2 and 3 till the desired vocabulary size is achieved.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>The next step in representing sentences is converting each token into an array of integers and/or floats which can be input into our model. The four common strategies for achieving this representation are dictionary indices, Word2Vec/GloVe, RNN/LSTM, and Transformers.</p>
+<h3 id="dictionary-indices">Dictionary Indices</h3>
+<p>Using dictionary indices is the easiest way of converting tokens into an array of floats. First, we order the words in our dictionary from <code>0 to the size of the dictionary - 1</code>. Then, we use a one-hot vector of <code>length = size of dictionary</code> to represent each token, where all elements are $0$ except the value at the token&rsquo;s index in the dictionary, which contains a $1$. For example, if a dictionary contains 2000 elements and if the token <code>Machine</code> is at the 342nd index in the dictionary, then its encoding will be an array of length 2000 containing 0s at all places except 1 at the 342nd index.</p>
+<h3 id="word2vec-and-glove">Word2Vec and GloVe</h3>
+<p>A one-hot vector for each token is impractical because our dictionary can have thousands of tokens. Word2Vec and GloVe are two common ways of converting one-hot vector representation of tokens to a smaller dimensional vector. 
+<strong>Word2Vec</strong> refers to a group of shallow $2$-layer neural nets that can be used to create these smaller dimensional vectors. The neural nets can either use a continuous bag-of-words architecture or a continuous skip-gram architecture. Both models have a hidden layer that can be used after training to get word embedding. The continuous bag-of-words architecture refers to a feed-forward model that uses surrounding words to predict the next word. The skip-gram architecture on the other hand uses the current word to predict surrounding words.
+<img src="/p/leveraging-natural-language/images/skipGram.png"
+	width="815"
+	height="454"
+	srcset="/p/leveraging-natural-language/images/skipGram_hu169f1368e1c8a388003d7fcbaa0abc8e_13039_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/skipGram_hu169f1368e1c8a388003d7fcbaa0abc8e_13039_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="179"
+		data-flex-basis="430px"
+	
+></p>
+<p><em>Figure 4: Bag-of-Words and Skip-Gram architectures used for Word2Vec</em></p>
+<p><strong>GloVe</strong> also known as Global Vectors is an unsupervised algorithm for obtaining smaller dimensional vector representations. Global word-word co-occurrence statistics are first extracted from a training corpus and then a log-bilinear regression model is trained. The regression model combines global matrix factorization and local context window methods.
+<img src="/p/leveraging-natural-language/images/glove.png"
+	width="958"
+	height="528"
+	srcset="/p/leveraging-natural-language/images/glove_hu4e44d0ae1fc07ca43fbf1ad2dc09c40d_41775_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/glove_hu4e44d0ae1fc07ca43fbf1ad2dc09c40d_41775_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+></p>
+<p><em>Figure 5: Comparison of GloVe embeddings on different words. Values are normalized between $1$ (blue) and $-1$ (red).</em></p>
+<p>One of the most important qualities of both embeddings is that they preserve similarity between different sentences that have the same meaning.</p>
+<h3 id="rnnlstm">RNN/LSTM</h3>
+<p>Long-Short Term Memory (LSTM) models, which are a special type of Recurrent Neural Networks, can also be used to create vector representation of tokens. Additionally, they can also be used to create a vector representation of the whole sentence. 
+<img src="/p/leveraging-natural-language/images/lstm.png"
+	width="2014"
+	height="1322"
+	srcset="/p/leveraging-natural-language/images/lstm_hu6bee907bb3498980c7db25301095e2a4_191690_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/lstm_hu6bee907bb3498980c7db25301095e2a4_191690_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="152"
+		data-flex-basis="365px"
+	
+></p>
+<p><em>Figure 6: A diagram of the internal structure of an LSTM cell. The model typically consists of several such cells with either weight shared. During training, the outputs from the current cell become the input into the next cell.</em></p>
+<p>The hidden vector $h_t$ corresponds to the vector representation of each token while the last context vector $c_t$ corresponds to the vector representation of the whole sentence after training. LSTMs for vector representations are typically trained in an end-to-end fashion alongside the primary task.</p>
+<h3 id="transformer">Transformer</h3>
+<p>The Transformer is the current state-of-the-art model not only for encoding sentences but also grounding language in general. Transformers are particularly powerful because of multi-head self-attention which allows them to weigh different subsets of the input simultaneously.
+<img src="/p/leveraging-natural-language/images/transformer.png"
+	width="1999"
+	height="1151"
+	srcset="/p/leveraging-natural-language/images/transformer_hufe8d0a8591c0916acc1939d299069572_376109_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/transformer_hufe8d0a8591c0916acc1939d299069572_376109_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="173"
+		data-flex-basis="416px"
+	
+></p>
+<p><em>Figure 7: Model Architecture of the Transformer</em></p>
+<p>Today, Transformers are being applied to a variety of tasks, from NLP-oriented translation and text summarization tasks to multimodal objectives such as visual question answering and navigation. Transformers can be easily modified to take in multimodal inputs by modifying the input and output embedding layers to process images using CNNs. Image embeddings can then be concatenated with token embeddings to get a frame-by-frame multimodal embedding of the task.</p>
+<h2 id="unifying-task-language-data">Unifying task-language data</h2>
+<p>One example of how language data can help in executing a certain task was outlined in the Action2Vec framework that combined language data with videos.
+The framework did the following:</p>
+<ol>
+<li>Create embeddings from video frames using a CNN</li>
+<li>Embed features extracted from CNN into a single vector using an LSTM</li>
+<li>Similarly, for words, create embeddings from words using Word2Vec and embed features extracted into a single vector using an LSTM or a pooling operation (avg/max pooling)</li>
+<li>Use a Pairwise Ranking Loss that takes these dense vectors and makes sure that words and videos that share the same concepts have similar embeddings and different words and videos have different embeddings</li>
+<li>Once, these embeddings are created, we can perform &ldquo;arithmetic&rdquo; on these embeddings. For example below, we take the embeddings for frames of a person playing piano and we try to create a video that shows a person playing a &ldquo;violin&rdquo; instead of a &ldquo;piano&rdquo;. This can be done by getting the mean Action2Vec embeddings for videos corresponding to piano playing, subtracting the Word2Vec embedding for &ldquo;piano&rdquo;, adding the Word2Vec embedding for &ldquo;violin&rdquo;, and searching the Action2Vec embedding space for all frames that are similar to the resulting vector. 
+<img src="/p/leveraging-natural-language/images/Action2Vec.png"
+	width="853"
+	height="309"
+	srcset="/p/leveraging-natural-language/images/Action2Vec_hu758e0a971cc05d02657e5eaf25e80874_116816_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/Action2Vec_hu758e0a971cc05d02657e5eaf25e80874_116816_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="276"
+		data-flex-basis="662px"
+	
+>
+<em>Figure 8: Model Architecture of the Action2Vec Framework</em></li>
+</ol>
+<h2 id="structured-language-approaches">Structured language approaches</h2>
+<h3 id="what-is-structured-language">What is structured language?</h3>
+<p>Structured language involves directly mapping words to concepts that the robot already knows. This is done by parsing the word sequence and tagging each word with its semantic purpose. These parsed sequences are mapped to pre-made logical primitives that the robot can interpret. One way these logical primitives can be represented is through linear temporal logic (LTL) specification. Also, this structured language approach requires a decent amount of overhead since the robot already needs to completely know all the actions available to it as well as the direct mapping from words to those actions.</p>
+<p>As shown in figure 9, an example approach involves:</p>
+<ol>
+<li>Tagging and parsing - Assigning a hierarchical structure to a sentence</li>
+<li>Null element restoration - Allows the structure of imperatives to be directly matched by a semantic interpretation module</li>
+<li>VerbNet frame matching - Identifies verbs and their arguments in parse trees using VerbNet</li>
+<li>LTL Formula Generation - Maps to existing logical primitive</li>
+</ol>
+<p><img src="/p/leveraging-natural-language/images/ltl.png"
+	width="1247"
+	height="246"
+	srcset="/p/leveraging-natural-language/images/ltl_hue9626b3da46b4f9b03fb952da34abc76_98760_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/ltl_hue9626b3da46b4f9b03fb952da34abc76_98760_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="506"
+		data-flex-basis="1216px"
+	
+>
+<em>Figure 9: Conversion of the sentence &ldquo;Go to the hallway&rdquo; into LTL formulas through tagging, parsing, null element restoration, semantic interpretation, and LTL formula generation</em></p>
+<p>Although expensive to develop, this structure allows humans to directly inspect generated plans. This means that the system has guarantees and is verifiable. It is also simple to diagnose failures since researchers can investigate contradictions in planned behaviors.</p>
+<h3 id="advantages--disadvantages">Advantages &amp; Disadvantages</h3>
+<h4 id="advantages">Advantages</h4>
+<ul>
+<li>Generalization:
+<ul>
+<li>It is possible to ensure that commands map directly to task executions</li>
+</ul>
+</li>
+<li>Interpretability:
+<ul>
+<li>Researches can directly analyze task executions to the language since it is human-readable</li>
+</ul>
+</li>
+<li>Failure analysis:
+<ul>
+<li>It is easy to debug since one can directly trace out the plans and language commands to resolve issues</li>
+</ul>
+</li>
+</ul>
+<h4 id="disadvantages">Disadvantages</h4>
+<ul>
+<li>Brittle:
+<ul>
+<li>The wording for the actions has to be very exact meaning the researcher need to memorize the wording for all the actions</li>
+</ul>
+</li>
+<li>Expertise Required:
+<ul>
+<li>Non-experts may have difficulties creating logic primitives and connecting them to corresponding sentence parses</li>
+</ul>
+</li>
+<li>Ambiguity:
+<ul>
+<li>The speaker needs to be exact in wording and not give under-specified commands (ex. “leave” instead of “leave the room”)</li>
+</ul>
+</li>
+</ul>
+<h2 id="low-level-language-task-alignment">Low-level language-task alignment</h2>
+<h3 id="policy-sketches">Policy Sketches</h3>
+<p>Policy sketches involve having low-level planners for each specific task and then having a high-level model that activates these sub-components to complete the full action. This includes training an overarching network that can understand a full task specification and then will use existing sub-policies when needed. 
+<img src="/p/leveraging-natural-language/images/policySketches.png"
+	width="1181"
+	height="359"
+	srcset="/p/leveraging-natural-language/images/policySketches_huac224bd8b6b28dc3e3a0c1639a4726ef_347377_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/policySketches_huac224bd8b6b28dc3e3a0c1639a4726ef_347377_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="328"
+		data-flex-basis="789px"
+	
+>
+<em>Figure 10: The figure shows an example approach where simplified versions of two tasks (make planks and make sticks) and a model overview of the sub-policies</em></p>
+<p>As shown in figure 10, the subtasks (ex. $b_1$ which is &ldquo;get wood&rdquo; ) are represented by a unique policy ($\pi_i$); however, the high-level planner can active these components when necessary to make a full plan. In this approach, the high-level model deals with mapping language to sub-policies, and the low-level planners deal with executing action necessary for the sub-task. By using a more hierarchal approach, this approach avoids having to design a single end-to-end network deal with the entire process of converting language to desired actions.</p>
+<h4 id="advantages--disadvantages-1">Advantages &amp; Disadvantages</h4>
+<h5 id="advantages-1">Advantages</h5>
+<ul>
+<li>Generalization:
+<ul>
+<li>It is possible to recombine existing policies to produce new behaviors</li>
+</ul>
+</li>
+<li>Learned task models:
+<ul>
+<li>Since it uses a learning approach, there is less developmental overhead and can be less brittle than structured language</li>
+</ul>
+</li>
+<li>Differentiable:
+<ul>
+<li>Able to learn task execution without needing an expert to specify logical plans</li>
+</ul>
+</li>
+</ul>
+<h5 id="disadvantages-1">Disadvantages</h5>
+<ul>
+<li>Brittle:
+<ul>
+<li>Policies are still triggered with pre-specified words used during training</li>
+</ul>
+</li>
+<li>Plans required:
+<ul>
+<li>The developers must create new behaviors and know how to combine explicit words to produce behaviors</li>
+</ul>
+</li>
+</ul>
+<h3 id="reward-functions">Reward Functions</h3>
+<p>One way to reduce interaction time with the environment is to use reward shaping by designing a reward function that provides the agent intermediate rewards for progress towards the goal. Designing a good reward function can be very difficult, expensive, and time-consuming; however, one way to address this problem is by using language instructions to perform reward shaping. This reward function approach mainly involves mapping language to state and action in the world to determine if they are related. This can be done using a framework like LEARN which maps language to rewards based on the agent&rsquo;s actions.</p>
+<p><img src="/p/leveraging-natural-language/images/learn.png"
+	width="477"
+	height="400"
+	srcset="/p/leveraging-natural-language/images/learn_hu88c3dc19022e8ad337c3f270c9cb8f37_97513_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/learn_hu88c3dc19022e8ad337c3f270c9cb8f37_97513_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="119"
+		data-flex-basis="286px"
+	
+>
+<em>Figure 11: Example framework which involves training LEARN module and using its intermediate rewards to assist within the agent-environment loop.</em></p>
+<p>Figure 11 shows an example pipeline of producing a reward function from labeled random trajectories. Its main steps involve:</p>
+<ol>
+<li>Gather a dataset of labeled trajectories (sequence of past actions)</li>
+<li>Align trajectory information to language commands or prompts
+<ul>
+<li>Basically, the labelers can explain what they see or say the commands that would have led to that behavior. (&ldquo;Jump over the skull while going left&rdquo;)</li>
+</ul>
+</li>
+<li>Learn to associate the collected language commands and trajectories (ex. LEARN)</li>
+<li>If the resultant trajectory correctly corresponds to the language sequence, a positive reward is given (Language reward)</li>
+</ol>
+<h3 id="advantages--disadvantages-2">Advantages &amp; Disadvantages</h3>
+<h4 id="advantages-2">Advantages</h4>
+<ul>
+<li>Generalization:
+<ul>
+<li>Learning from human-created language prompts.</li>
+<li>Provide new utterances and map them to new trajectories/plans.</li>
+</ul>
+</li>
+<li>Single model:
+<ul>
+<li>Do not need to activate relevant policies</li>
+<li>One agent deals with learning the entire mapping</li>
+</ul>
+</li>
+<li>Grounding is implicit:
+<ul>
+<li>Do not need to manually label the environment or actions</li>
+<li>The model automatically learns the relationship between words to actions</li>
+</ul>
+</li>
+</ul>
+<h4 id="disadvantages-2">Disadvantages</h4>
+<ul>
+<li>Data collection:
+<ul>
+<li>Have to collect a LOT of labeled data for learning</li>
+<li>It is also difficult for a human to guide the training afterward</li>
+</ul>
+</li>
+<li>Training time:
+<ul>
+<li>Whenever new behavior with language needs to be added, the model needs to be fine-tuned before the behavior can be produced.</li>
+</ul>
+</li>
+<li>Single model:
+<ul>
+<li>Learning for multiple, unrelated tasks might be extremely difficult</li>
+</ul>
+</li>
+</ul>
+<h2 id="high-level-language-task-alignment">High-level language-task alignment</h2>
+<h3 id="what-are-high-level-tasks">What are High-level Tasks?</h3>
+<p>In high-level language-task alignment, we focus on giving the agent more complex and &ldquo;abstract&rdquo; instructions, such as &ldquo;go to the library&rdquo;, compared to policy sketches which would use commands such as &ldquo;go forwards, go left, go forwards, go right&rdquo; where we have to explicitly lay out the subtasks for the agent. Note that such high-level tasks usually consist of a sequence of simple actions (known as primitives) or these actions associated in some hierarchical manner. Unlike the methods above, the agent, here, has to learn subtasks that need to be performed to complete the high-level task and has to learn how to complete each subtask.</p>
+<h3 id="imitating-interactive-intelligence">Imitating Interactive Intelligence</h3>
+<p>We look at Imitating Interactive Intelligence, a paper published by DeepMind in 2020 to better understand how agents can learn high-level language-task alignment. 
+The paper involved two agents in a simulated bedroom as the environment that tried to learn from the demonstrations provided:</p>
+<ul>
+<li>one that would provide tasks to be performed (known as the setter)
+<ul>
+<li>The setter would create a language command based on the interaction and prompt provided by the environment.</li>
+<li>The interaction was the type of general task to be performed (ex: Instruction, Q&amp;A).</li>
+<li>The prompt was used by the environment to specify the type of interaction to be performed (ex: for Q&amp;A, the prompt specified whether the question should ask the count, color, location, or position of an object)</li>
+</ul>
+</li>
+<li>one that would perform the task created by the setter (known as the solver).
+<img src="/p/leveraging-natural-language/images/iii_relationships.png"
+	width="714"
+	height="445"
+	srcset="/p/leveraging-natural-language/images/iii_relationships_huc823c259c96ce942146f3257b925ade2_100400_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/iii_relationships_huc823c259c96ce942146f3257b925ade2_100400_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="385px"
+	
+>
+<em>Figure 12: Relationship between Interactions, Prompts, and Instructions Created</em></li>
+</ul>
+<h3 id="how-are-the-agents-trained">How are the agents trained?</h3>
+<h4 id="general-process-of-training">General Process of Training</h4>
+<ol>
+<li>Gather human demonstrations</li>
+<li>Apply Behavior Cloning to demonstrations and learn policy from learned reward model through Forward RL to create agent policies</li>
+<li>Apply GAIL to create a reward model from the policy created and demonstrations provided</li>
+<li>Repeat steps 2. and 3. until the solver can complete tasks that are created by the setter.</li>
+</ol>
+<h4 id="using-behavior-cloning-bc-to-create-policies">Using Behavior Cloning (BC) to Create Policies</h4>
+<ul>
+<li>First, the authors took the image data from the simulated environment and passed it through a ResNet (a popular CNN architecture to understand images) to create the image embeddings.</li>
+<li>Similarly, the authors took text data from the prompts provided by the environment, previous language policies generated, and communication between the agents and they tokenized it to create textual embeddings.</li>
+<li>Next, the authors combined these embeddings and passed them through a multimodal transformer, as transformers have been proven to work well for vision-and-language tasks (ex: VILBERT, CLIP, etc).</li>
+<li>The outputs of the transformer would be lastly passed to an LSTM which would produce an autoregressive sequence of actions (meaning that actions depend on previous actions) that are needed to be performed to complete the task as well as any words to output.</li>
+<li>These policies are trained to match the demonstrator&rsquo;s policies via Behavior Cloning. 
+<img src="/p/leveraging-natural-language/images/bc_model.png"
+	width="1157"
+	height="406"
+	srcset="/p/leveraging-natural-language/images/bc_model_hu8b42d655e5dfc3771f5b339d4d302fca_139511_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/bc_model_hu8b42d655e5dfc3771f5b339d4d302fca_139511_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="284"
+		data-flex-basis="683px"
+	
+>
+<em>Figure 13: Model Architecture for using BC to Create Policies from Image and Language Data</em></li>
+</ul>
+<h4 id="using-inverse-reinforcement-learning-irl-to-create-reward-model">Using Inverse Reinforcement Learning (IRL) to create Reward Model</h4>
+<ul>
+<li>Note that the Reward model similarly receives its inputs to the Policy model above: by using image and text data, converting these modalities of data into embeddings, fusing these embeddings, and using a multimodal transformer to understand the fused embeddings.</li>
+<li>The discriminator loss is used similarly as GAIL: to determine whether the trajectories were produced by the agent or if they were sampled from the demonstrations produced by experts.</li>
+<li>As GAIL is difficult to use with high-dimensional data, the authors also use multiple strategies outlined below to make GAIL effective for the setup chosen such as random image augmentation (ex: cropping, rotating, translating images), language matching, and object-in-view.</li>
+<li>The authors employed language matching as an auxiliary task for representation learning that checks whether the instruction created by the setter and the images inputted come from the same episode or not. This would require the ResNet to produce embeddings that have a high degree of mutual information with the tokenized inputs.</li>
+<li>The authors employed object-in-view as another auxiliary task for representation learning that asks the agent to predict whether a certain object is in the image data provided to the agent or not. This requires the ResNet to produce embeddings that reflect the objects present in the image data.
+<img src="/p/leveraging-natural-language/images/irl_model.png"
+	width="1082"
+	height="325"
+	srcset="/p/leveraging-natural-language/images/irl_model_hu56056958688c966440392f206e5612ab_68793_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/irl_model_hu56056958688c966440392f206e5612ab_68793_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="332"
+		data-flex-basis="799px"
+	
+>
+<em>Figure 14: Model Architecture for using IRL to Create Reward Models from Image and Language Data</em></li>
+</ul>
+<h3 id="results">Results</h3>
+<ul>
+<li>In study A below, the authors found that using behavior cloning and GAIL was more effective than simply learning behavior cloning and not learning the reward model for tasks that required following instructions. However, using GAIL to learn a reward model did not seem to significantly boost performance for question-answering tasks.
+<ul>
+<li>This is because GAIL can help the agent understand what a task truly means, which is helpful for instruction following, while behavior cloning can not.</li>
+<li>On the other hand, behavior cloning can simply mimic the mapping from questions to answers that the demonstrator uses so it tends to be as effective as using behavior cloning and GAIL for Q&amp;A tasks.</li>
+</ul>
+</li>
+<li>In study B below, the authors also found that for a given task, such as finding the count of a certain object in a room, using data for other tasks for training, such as finding the position/color of an object, led to better performance over limiting the training data to only include demonstrations that directly corresponded to the task that was to be performed.
+<ul>
+<li>This is because more diverse data and seemingly unrelated commands allow tasks to inform each other (due to some crossover), allows the agent to better understand the language of the commands it receives, and how this language is grounded in the environment.</li>
+</ul>
+</li>
+<li>Study C shows that this phenomenon also helps with data efficiency; when trained with all types of prompts, the model only needed 1/8th as much data as training with only the &ldquo;Position&rdquo; prompt to reach the same level of performance.</li>
+<li>Study D similarly shows object-color generalization capabilities as the model was able to sufficiently perform tasks dealing with orange ducks such as &ldquo;lift an orange duck&rdquo; even when all instances of orange ducks were removed from the dataset.
+<img src="/p/leveraging-natural-language/images/iii_studies.png"
+	width="770"
+	height="640"
+	srcset="/p/leveraging-natural-language/images/iii_studies_hu92f176062201b8cdf5138191578bd086_110739_480x0_resize_box_3.png 480w, /p/leveraging-natural-language/images/iii_studies_hu92f176062201b8cdf5138191578bd086_110739_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="120"
+		data-flex-basis="288px"
+	
+>
+<em>Figure 15: Graphs for some of the studies performed by the authors (described in detail above)</em></li>
+</ul>
+<h3 id="advantages--disadvantages-3">Advantages &amp; Disadvantages</h3>
+<h4 id="advantages-3">Advantages</h4>
+<ul>
+<li>Generalization:
+<ul>
+<li>Language commands learned are general and compositional</li>
+</ul>
+</li>
+<li>Large Multi-Task Model:
+<ul>
+<li>Agents do not need to learn sub-policies.</li>
+<li>They can simply learn a set of behaviors that can be used for a variety of tasks</li>
+<li>These behaviors also inform each other, leading to better performance for any task when compared to using a single-task approach</li>
+</ul>
+</li>
+<li>Production of Language:
+<ul>
+<li>Agents are not only able to understand the language commands but are also able to produce them</li>
+<li>Such an ability may allow the agent to explain itself</li>
+</ul>
+</li>
+</ul>
+<h4 id="disadvantages-3">Disadvantages</h4>
+<ul>
+<li>Data Collection and Complex Training Strategies:
+<ul>
+<li>This paper required 2+ years of data collection in a complex simulator that required 2 demonstrators interacting.</li>
+<li>Due to the expensiveness of the data collection, this paper is rather difficult to reproduce.</li>
+<li>Also, the complex tricks required may mean that the results are limited to the environment that the authors have set up and the constrained vocabulary (~550 unique words) that they are using</li>
+</ul>
+</li>
+<li>Independent Training:
+<ul>
+<li>Agent cannot actively ask for help on new problems.</li>
+<li>For example, the agent cannot ask to see more data on tasks that it has not been asked to perform before or on objects that it has not seen before</li>
+</ul>
+</li>
+<li>Cannot Quickly Acquire New Knowledge:
+<ul>
+<li>Since many data points are required and a high amount of compute is necessary for training, it is difficult for the model to learn new tasks or to gain new insights quickly, as this would require more data points for those tasks and the model would have to be re-trained from scratch.</li>
+<li>In other words, it is &ldquo;set&rdquo;.
+Future Research Directions</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li>Methods to learn from language that is representative of experiences in the &ldquo;real world&rdquo;, rather than using language that is crawled from the Internet
+<ul>
+<li>Ground language in task execution and objects in the environment and use language is taken directly from humans, rather than just using tweets from Twitter or posts on Reddit</li>
+</ul>
+</li>
+<li>Learning to use language for Active Learning
+<ul>
+<li>Creating capabilities for the agent to ask for assistance, clarification, or to remove ambiguities using language, rather than just using offline learning that often requires many data points</li>
+</ul>
+</li>
+<li>Creating efficient systems of NLP + RL
+<ul>
+<li>Creating a model that can efficiently learn new tasks and knowledge beyond its existing knowledge base in an efficient manner</li>
+<li>Also, agents must learn to think and act quickly to be used in real-world situations where language instructions are given constantly</li>
+</ul>
+</li>
+<li>Learning interactively
+<ul>
+<li>Creating capabilities for the agent to ask for more demonstrations on a certain task or other forms of assistance so that the agent is more involved in the learning process (more like &ldquo;situated learning&rdquo;)</li>
+</ul>
+</li>
+<li>Using Audio Data
+<ul>
+<li>Audio data has previously not been used due to its high dimensionality.</li>
+<li>However, acoustics can influence the meaning of commands; for example, giving a command in a sarcastic tone is quite different from giving it in an urgent tone</li>
+<li>Also, the volume and duration of the acoustics could indicate whether the agent is receiving the command or whether the command was intended for someone else (allows the agent to learn from noisy commands, which typically occurs in the real world)</li>
+</ul>
+</li>
+</ul>
+<h2 id="key-takeaways">Key Takeaways</h2>
+<ul>
+<li>Using language can help solve agents solve many tasks but it remains difficult due to the problem of grounding the input.</li>
+<li>There are several representations we can use for language such as sequences of tokens, dictionary indices, Word2Vec, GloVe, RNNs, LSTMs, and Transformers, with each representation having its advantages and disadvantages.</li>
+<li>To unify task-learning and language for LfD, there are three main approaches we discussed: structure language approaches, low-level language-task alignment, and high-level language-task alignment (note that each approach is more complex yet more applicable in the real world than the previous).</li>
+<li>Leveraging natural language is still an open area of research with current approaches trying to leverage audio or trying to make these approaches more interactive, efficient, and applicable in the real world.</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/nlp/">NLP</a>
+        
+            <a href="/tags/lfd/">LFD</a>
+        
+            <a href="/tags/rl/">RL</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+        <div class="article-list--compact links">
+    
+        <article>
+            <a href="https://arxiv.org/abs/1901.00484" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Action2Vec: A Crossmodal Embedding Approach to Action Learning</h2>
+                    <footer class="article-time">
+                        
+                            An example on how language can help solve general tasks in AI
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/action2vec_logo.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+        <article>
+            <a href="https://link.springer.com/article/10.1007%2Fs10514-014-9418-8" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Provably correct reactive control from natural language</h2>
+                    <footer class="article-time">
+                        
+                            An example of the structured language approach discussed
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/structuredlanguage_logo.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+        <article>
+            <a href="https://proceedings.mlr.press/v70/andreas17a/andreas17a.pdf" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Modular Multitask Reinforcement Learning with Policy Sketches</h2>
+                    <footer class="article-time">
+                        
+                            An example of using policy sketches for simplified tasks and then using a high-level policy to learn from these policy sketches
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/policySketches_logo.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+        <article>
+            <a href="https://www.ijcai.org/Proceedings/2019/0331.pdf" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Using Natural Language for Reward Shaping in Reinforcement Learning</h2>
+                    <footer class="article-time">
+                        
+                            An overview of LEARN (LanguagE-Action Reward Network), which uses natural language to create intermediate rewards for the agent
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/learn_logo.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+        <article>
+            <a href="https://arxiv.org/abs/2012.05672" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Imitating Interactive Intelligence</h2>
+                    <footer class="article-time">
+                        
+                            An example of enabling agents to learn high-level language and use it towards completing several tasks
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/iii_logo.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+</div>
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 Beyond the Buzz
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.11.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#motivation">Motivation</a>
+      <ol>
+        <li><a href="#why-do-we-want-to-use-language">Why do we want to use language?</a></li>
+      </ol>
+    </li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#representation">Representation</a>
+      <ol>
+        <li><a href="#sequence-of-tokens">Sequence of Tokens</a></li>
+        <li><a href="#dictionary-indices">Dictionary Indices</a></li>
+        <li><a href="#word2vec-and-glove">Word2Vec and GloVe</a></li>
+        <li><a href="#rnnlstm">RNN/LSTM</a></li>
+        <li><a href="#transformer">Transformer</a></li>
+      </ol>
+    </li>
+    <li><a href="#unifying-task-language-data">Unifying task-language data</a></li>
+    <li><a href="#structured-language-approaches">Structured language approaches</a>
+      <ol>
+        <li><a href="#what-is-structured-language">What is structured language?</a></li>
+        <li><a href="#advantages--disadvantages">Advantages &amp; Disadvantages</a>
+          <ol>
+            <li><a href="#advantages">Advantages</a></li>
+            <li><a href="#disadvantages">Disadvantages</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#low-level-language-task-alignment">Low-level language-task alignment</a>
+      <ol>
+        <li><a href="#policy-sketches">Policy Sketches</a>
+          <ol>
+            <li><a href="#advantages--disadvantages-1">Advantages &amp; Disadvantages</a></li>
+          </ol>
+        </li>
+        <li><a href="#reward-functions">Reward Functions</a></li>
+        <li><a href="#advantages--disadvantages-2">Advantages &amp; Disadvantages</a>
+          <ol>
+            <li><a href="#advantages-2">Advantages</a></li>
+            <li><a href="#disadvantages-2">Disadvantages</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#high-level-language-task-alignment">High-level language-task alignment</a>
+      <ol>
+        <li><a href="#what-are-high-level-tasks">What are High-level Tasks?</a></li>
+        <li><a href="#imitating-interactive-intelligence">Imitating Interactive Intelligence</a></li>
+        <li><a href="#how-are-the-agents-trained">How are the agents trained?</a>
+          <ol>
+            <li><a href="#general-process-of-training">General Process of Training</a></li>
+            <li><a href="#using-behavior-cloning-bc-to-create-policies">Using Behavior Cloning (BC) to Create Policies</a></li>
+            <li><a href="#using-inverse-reinforcement-learning-irl-to-create-reward-model">Using Inverse Reinforcement Learning (IRL) to create Reward Model</a></li>
+          </ol>
+        </li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#advantages--disadvantages-3">Advantages &amp; Disadvantages</a>
+          <ol>
+            <li><a href="#advantages-3">Advantages</a></li>
+            <li><a href="#disadvantages-3">Disadvantages</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#key-takeaways">Key Takeaways</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
