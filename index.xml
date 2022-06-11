@@ -6,7 +6,202 @@
         <description>Recent content on Beyond the Buzz</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 01 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 11 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Video-and-Language Pre-Training with AlPRO</title>
+        <link>http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/</link>
+        <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/</guid>
+        <description>&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;A recent trend in AI is to solve tasks that use multiple modalities (text, audio, images, video, etc.). As part of this effort, one specific area is the video-and-language understanding, which includes tasks such as text-video retrieval, video question answering, and video captioning.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/video-language-tasks.png&#34;
+	width=&#34;660&#34;
+	height=&#34;478&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/video-language-tasks_hube1e6d1256efda1602d77307a85c0770_21189_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/video-language-tasks_hube1e6d1256efda1602d77307a85c0770_21189_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;138&#34;
+		data-flex-basis=&#34;331px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 1: Examples of video-language tasks from the VALUE (Video-and-Language Understanding Evaluation) paper&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Since there are so many tasks in this field and new tasks will likely appear in the near future, researchers have worked to create unified models that can solve many of these tasks. One such approach to create a unified model is to develop a &lt;strong&gt;pretraining&lt;/strong&gt; strategy that develops meaningful representations for the video and text which can then be used for any of these tasks.&lt;/p&gt;
+&lt;h2 id=&#34;difficulties-with-video-language-pre-training&#34;&gt;Difficulties with Video-Language Pre-Training&lt;/h2&gt;
+&lt;p&gt;However, there are several difficulties with creating such a model, some of which are outlined below.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compared to images, consecutive frames in videos may convey the same information or may be slightly different and we would be wasting memory and computation power if we use every single frame to solve a specific task (especially in an online system).&lt;/li&gt;
+&lt;li&gt;The feature representations of videos and text are often in completely different vector spaces and understanding the interactions between these two is not as trivial, often leading to &lt;strong&gt;misalignment&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Tasks used to train these pre-trained models typically focus on the high-level information conveyed in a video rather than specific, &lt;strong&gt;fine-grained&lt;/strong&gt; information such as the objects shown.&lt;/li&gt;
+&lt;li&gt;Videos also have the additional difficulty unlike images of conveying &lt;strong&gt;temporal&lt;/strong&gt; information: the easy solution of simply using the frames of the video independently of each other completely ignores this information.&lt;/li&gt;
+&lt;li&gt;Since annotation is expensive and sometimes subjective (especially in the case of video captioning), there is a lack of large datasets of data that are manually annotated, so approaches often need to use unlabeled data or create &amp;ldquo;pseudo-labels&amp;rdquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this literature review, we will be looking at a papers that focus on solving these challenges called &lt;strong&gt;ALPRO&lt;/strong&gt; by Salesforce Research, which focuses on solving the misalignment problem through a &lt;em&gt;video-text contrastive&lt;/em&gt; (VTC) loss and &amp;ldquo;lack of fine-grained information&amp;rdquo; problem through a &lt;em&gt;prompting entity modeling&lt;/em&gt; (PEM) pretraining task.&lt;/p&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;AlPRO first focuses on creating representations for the text and video independently (called &amp;ldquo;unimodal encoding&amp;rdquo;) and then sending these representations to a multimodal encoder to capture the interactions between the two through a video-text contrastive loss, which pushes the representations of the similar texts and video to be closer to each other and vice-versa. To capture fine-grained visual information, AlPRO uses a prompting entity modeling (PEM) pretraining objective, where the model is asked to predict the entities from random crops that are extracted from the video. Since the labels for these entities are not available, a &lt;em&gt;entity prompter&lt;/em&gt; module is added to create &amp;ldquo;pseudo-labels&amp;rdquo; as proxies for the true labels. These pseudo-labels are essentially normalized similarity scores between the random crops and a set of entities of the form &amp;ldquo;A video of {entity}&amp;rdquo;, where these entities are sampled from nouns that were found in the pretraining corpus.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/alpro-example.png&#34;
+	width=&#34;553&#34;
+	height=&#34;595&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/alpro-example_hu33cbd42a934ca63b69fe3e78b9e3124e_197182_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/alpro-example_hu33cbd42a934ca63b69fe3e78b9e3124e_197182_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;92&#34;
+		data-flex-basis=&#34;223px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 2: An example of how AlPRO differs from previous approaches and how it uses the entity prompter module for its pretraining objective&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;deep-dive&#34;&gt;Deep Dive&lt;/h2&gt;
+&lt;h3 id=&#34;encoding-the-video-and-text&#34;&gt;Encoding the Video and Text&lt;/h3&gt;
+&lt;h4 id=&#34;visual-encoder&#34;&gt;Visual Encoder&lt;/h4&gt;
+&lt;p&gt;For the visual encoder, a 12-layer &lt;strong&gt;TimeSFormer&lt;/strong&gt; is used which takes input frames of size $224 \times 224$.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Each frame is split into $K$ patches which are then encoded to produce representations for each patch.&lt;/li&gt;
+&lt;li&gt;Similar to standard transformers, &lt;strong&gt;positional embeddings&lt;/strong&gt; are also created so that the model is aware of the position of different patches in the image (since the position and content of the patch both convey important information).&lt;/li&gt;
+&lt;li&gt;Temporal and spatial attention is then performed to create $K \times d$ features for each frame.&lt;/li&gt;
+&lt;li&gt;The features are then averaged across frames to create a single $K \times d$ vector for the whole video, in addition to the respresentation of the [CLS] token which is known to contain information of the entire image/video as it attends to every patch.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/timesformer-attention.png&#34;
+	width=&#34;600&#34;
+	height=&#34;531&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/timesformer-attention_huf6edaf166425396bd3767ea35ccb2b49_319177_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/timesformer-attention_huf6edaf166425396bd3767ea35ccb2b49_319177_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;112&#34;
+		data-flex-basis=&#34;271px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 3: Example of the divided space-time attention that is used in the TimeSformer compared to standard space attention and attending across the entire space across time (joint space-time attention)&lt;/em&gt;&lt;/p&gt;
+&lt;h4 id=&#34;text-encoder&#34;&gt;Text Encoder&lt;/h4&gt;
+&lt;p&gt;For text, a standard 6-layer transformer is used to create representations for the text from the first 6 layers of a pretrained text transformer known as &lt;strong&gt;BERT_{base}&lt;/strong&gt;. The text is split into tokens and each token is encoded to produce a $d$-dimensional representation. Similar to the visual encoder, positional embeddings are added and the [CLS] token is used to contain information of the entire text sequence.&lt;/p&gt;
+&lt;h4 id=&#34;multimodal-encoder&#34;&gt;Multimodal Encoder&lt;/h4&gt;
+&lt;p&gt;The multimodal encoder is a standard transformer that takes the representations of the video and text and combines them to create a combined representation. The video and text representations are directly concatenated to produce a $(N_v + N_t) \times d$ vector outputted by the multimodal encoder.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/encoders.png&#34;
+	width=&#34;607&#34;
+	height=&#34;318&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/encoders_hu7aa39442e4f59237e884156c0d7eff22_53893_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/encoders_hu7aa39442e4f59237e884156c0d7eff22_53893_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;190&#34;
+		data-flex-basis=&#34;458px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 4: An outline of how the video and text are encoded and fed into a multimodal video-text encoder&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;pretraining&#34;&gt;Pretraining&lt;/h3&gt;
+&lt;p&gt;ALPRO is trained on four objectives, including two traditional ones such as &lt;strong&gt;masked language modeling&lt;/strong&gt; (MLM) and &lt;strong&gt;video-text matching&lt;/strong&gt; (VTM)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In MLM, the model is asked to predicted masked text token; specifically, certain tokens are replaced with [MASK] and the model is asked to predict what the original token was.&lt;/li&gt;
+&lt;li&gt;In VTM, the model is asked whether a video and text description are matching or not. Here, the [CLS] token of the multimodal representation is used and negative samples (video-text pairs that don&amp;rsquo;t match) are sampled from the training batch. Specifically, &lt;strong&gt;hard negatives&lt;/strong&gt; are sampled through several ways so that the model is challenged to distinguish positive video-text pairs from negative ones.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We will focus on the novel objectives introduced: the video-text contrastive (VTC) loss and prompting entity-modeling (PEM) losses.&lt;/p&gt;
+&lt;h4 id=&#34;video-text-contrastive-loss-vtc&#34;&gt;Video-Text Contrastive Loss (VTC)&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;[CLS] embeddings for both the video and text are projected to a lower-dimensional ($256$-dimensional) space through a linear projection layer.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Next, similarity scores are then calculated by taking the dot-product of both embeddings.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The video-text contrastive loss consists of two terms, both of which use these similarity scores.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Firstly, a single video $V_i$ is compared to several pieces of text $T$ and we want to encourage the representation for $V_i$ to be similar to the most similar instance of text in $T$ which we will denote as $T_i$. Below, we can see that we&amp;rsquo;re comparing the similarity score of $(V_i, T_i)$ to the similarity scores for all other text $T_j$ in the batch through what is known as the &lt;strong&gt;softmax&lt;/strong&gt; function and then the logarithm is applied. $\tau$ is often known as the temperature and scales the objective to better learn from the hard negatives.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$ L_{v2t} = -\log \frac{exp(s(V_i, T_i)/\tau)}{\sum_j exp(s(V_i, T_j)/\tau)} $$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Equation 1: First Component of Video-Text Contrastive Loss where a single video is compared to several pieces of text&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Similarly, a single piece of text $T_i$ is compared to several pieces of video $V$ and we want to encourage the representation for $T_i$ to be similar to the most similar instance of video in $V$ which we will denote as $V_i$.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$ L_{t2v} = -\log \frac{exp(s(T_i, V_i)/\tau)}{\sum_j exp(s(T_i, V_j) / \tau)} $$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Equation 2: Second Component of Video-Text Contrastive Loss where a single text is compared to several pieces of video&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;prompting-entity-modeling-pem-loss&#34;&gt;Prompting Entity-Modeling (PEM) Loss&lt;/h4&gt;
+&lt;p&gt;Note that the entity prompter has a similar architecture to the video-language pre-training model without the multimodal video-text encoder.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/entity-prompter.png&#34;
+	width=&#34;451&#34;
+	height=&#34;177&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/entity-prompter_hu52a093c8ffd748f120964b726a419751_38581_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/entity-prompter_hu52a093c8ffd748f120964b726a419751_38581_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;254&#34;
+		data-flex-basis=&#34;611px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 5: An outline of how the video and text are encoded for the entity-prompter&lt;/em&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The entity prompter maintains a list of $M$ text entity prompts as elaborated above of the form &amp;ldquo;A vide of {Entity}&amp;rdquo;. The entities are gathered by using a POS tagger and using the top 1,000 most frequent entities in the dataset.&lt;/li&gt;
+&lt;li&gt;For each of these prompts, the [CLS] token is pre-computed to be used later.&lt;/li&gt;
+&lt;li&gt;To generate the pseudo labels, we create random video crops $\hat{V}$ of the video and the corresponding [CLS] embedding from the video embedder. Note that only crops that occupy 30-50% of the original spatial area are included.&lt;/li&gt;
+&lt;li&gt;Next, we create the pseudo-label by finding the normalized similarity between the the crop [CLS] token $\hat{v_{cls}}$ and the prompt [CLS] tokens $t_{cls}$, with a formula similar to the contrastive-losses presented above. Note that only pseudo-labels that are above a certain threshold (0.2) are included in the calculations.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$ q_{\hat{V}, m} = \frac{exp(s(\hat{V}, T_m) / \tau)}{\sum_m exp(s(\hat{V}, T_m) / \tau)} $$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Equation 3: Formula for the pseudo-labels for the entity prompter&lt;/em&gt;&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;During pre-training, we take the embeddings from the multimodal encoder corresponding to the specific video crop and average them and then feed them to a classifier to compute the entity prediction $p_{\hat{V}}$. This is done similarly as above except we don&amp;rsquo;t use the similarity scores but the embeddings directly produced by the multimodal encoder.&lt;/li&gt;
+&lt;li&gt;Next, a cross-entropy loss between $p_{\hat{V}}$ and $q_{\hat{V}}$ is used as our final loss. Note that the cross-entropy loss encourages the two distributions $p$ and $q$ as the term grows larger when there&amp;rsquo;s an inconsistency between $p$ and $q$ (we predict a different label than the pseudo-label) and vice-versa.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$ L_{PEM} = -\sum_m q_{\hat{V}, m} \log p_{\hat{V}, m} $$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Equation 4: PEM loss which is simply cross-entropy between the pseudo-labels and the video-text model&amp;rsquo;s predictions for the entities&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/full-framework.png&#34;
+	width=&#34;1099&#34;
+	height=&#34;439&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/full-framework_huea0b605ba29f72fa144a633967b775b4_112952_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/full-framework_huea0b605ba29f72fa144a633967b775b4_112952_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;250&#34;
+		data-flex-basis=&#34;600px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 6: An outline of the full framework&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;experiments&#34;&gt;Experiments&lt;/h2&gt;
+&lt;h3 id=&#34;pre-training-data&#34;&gt;Pre-training Data&lt;/h3&gt;
+&lt;p&gt;For pre-training data, the authors use WebVid-2M, which contains 2.5 million video-text pairs with static videos created by arranging duplicates from images in the CC-3M dataset into videos.&lt;/p&gt;
+&lt;h3 id=&#34;experiment-data&#34;&gt;Experiment Data&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;For text-video retrieval, the MSRVTT dataset is used which contains 10,000 videos with 200,000 text captions.&lt;/li&gt;
+&lt;li&gt;For video-question answering, the MSVD-QA dataset is uised which contains 1,970 videos and 50,000 question answer pairs with 2,423 answer candidates and MSVRTT-QA which uses videos/captions from MSRVTT with 243,000 questions and 1,5000 answer candidates.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+&lt;p&gt;The authors find that both losses improve performance across all tasks and pseudo-labels are diverse and meaningful:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;VTC is found to be important for the text-video retrieval task since it solves the alignment problem between videos and text.&lt;/li&gt;
+&lt;li&gt;PEM helps for question-answering due to its ability to learn specific features in videos. However, performance is worse on MSVD-QA since MSVD-QA focuses on more region-level knowledge and only PEM plays a key role while MSRVTT-QA focuses on coarser-grained information so both losses play a key role.&lt;/li&gt;
+&lt;li&gt;When compared to other approaches, the authors find that AlPRO surpasses other methods substantially with a 6% improvement in performance with video-text retrieval and on-par results for video question answering even though much less data is used compared to other methods such as VQA-T which use 69 million QA pairs for training.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/pseudo-labels.png&#34;
+	width=&#34;730&#34;
+	height=&#34;418&#34;
+	srcset=&#34;http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/pseudo-labels_hua53b5db7787f0b95ee399cba88962330_337694_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/images/pseudo-labels_hua53b5db7787f0b95ee399cba88962330_337694_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;174&#34;
+		data-flex-basis=&#34;419px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 7: Examples of the pseudo-labels produced for an image&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;ablations&#34;&gt;Ablations&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Through ablations, authors find using multiple templates other than &amp;ldquo;A video of a {Entity}&amp;rdquo; such as &amp;ldquo;A footage of one {Entity}&amp;rdquo; which leads to additional gains in performance.&lt;/li&gt;
+&lt;li&gt;Additionally, keeping the number of entities low enough so that only the most frequent entities are used seems to play an important role as well.&lt;/li&gt;
+&lt;li&gt;Keeping the number of frames low is also important as the authors find that increasing the number of frames up to 8 increases performance but limited gains are seen when the number of frames is increased beyond 8.&lt;/li&gt;
+&lt;li&gt;Through these ablations and other analyses, the authors plan to focus more on creating better prompts as well as using temporal information to select the crops in the videos in the near future.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>About</title>
         <link>http://deidnani.github.io/about/</link>
         <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
@@ -14,7 +209,7 @@
         <guid>http://deidnani.github.io/about/</guid>
         <description>&lt;p&gt;I am a Master&amp;rsquo;s student in Georgia Institute of Technology studying Computational Science and Engineering &amp;amp; Quantitative and Computational Finance, and I am especially passionate about artificial intelligence and how it can revolutionize our lives. I started my journey in artificial intelligence through the several classes at Georgia Tech and I further polished the skills I learned in several of these classes through several internships in this area as well as research in the intersection of NLP and Finance.&lt;/p&gt;
 &lt;p&gt;Over time, I started to get more interested in other areas of artificial intelligence as well such as reinforcement learning, computer vision, machine learning systems design, machine learning with limited supervision, etc. To foster this interest, I kept up-to-date with the latest news in AI with Youtube channels such as Yannic Kilcher and the AI Epiphany as well as blogs by the leading organizations in AI today such as OpenAI, DeepMind, Meta AI, Microsoft Research, Google Brain, Amazon Research, etc.&lt;/p&gt;
-&lt;p&gt;However, I was looking for a one-stop shop where I could get detailed breakdown of research papers written by a diverse group of organizations and covering a variety of topics, so I decided to create this blog. I have often heard that &amp;ldquo;The Best Way to Learn Something is to Teach it to Someone Else&amp;rdquo; so I decided to put this principle to the test through the articles that I will publish in this blog. I hope that this blog not only helps me better understand the innovations discussed in these papers but also will help you to appreciate the many capabilities of AI (beyond it just being another &amp;ldquo;buzzword&amp;rdquo;) and how it will a major driver of the next scientific revolution.&lt;/p&gt;
+&lt;p&gt;However, I was looking for a one-stop shop where I could get detailed breakdowns of research papers written by a diverse group of organizations and covering a variety of topics, so I decided to create this blog. I have often heard that &amp;ldquo;The Best Way to Learn Something is to Teach it to Someone Else&amp;rdquo; so I decided to put this principle to the test through the articles that I will publish in this blog. I hope that this blog not only helps me better understand the innovations discussed in these papers but also will help you to appreciate the many capabilities of AI (beyond it just being another &amp;ldquo;buzzword&amp;rdquo;) and how it will a major driver of the next scientific revolution.&lt;/p&gt;
 </description>
         </item>
         <item>

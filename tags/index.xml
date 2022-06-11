@@ -6,20 +6,36 @@
         <description>Recent content in Tags on Beyond the Buzz</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 01 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>LFD</title>
-        <link>http://deidnani.github.io/tags/lfd/</link>
-        <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+        <lastBuildDate>Sat, 11 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>CV</title>
+        <link>http://deidnani.github.io/tags/cv/</link>
+        <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
         
-        <guid>http://deidnani.github.io/tags/lfd/</guid>
+        <guid>http://deidnani.github.io/tags/cv/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Multimodal</title>
+        <link>http://deidnani.github.io/tags/multimodal/</link>
+        <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/multimodal/</guid>
         <description></description>
         </item>
         <item>
         <title>NLP</title>
         <link>http://deidnani.github.io/tags/nlp/</link>
-        <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+        <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
         
         <guid>http://deidnani.github.io/tags/nlp/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>LFD</title>
+        <link>http://deidnani.github.io/tags/lfd/</link>
+        <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/lfd/</guid>
         <description></description>
         </item>
         <item>
