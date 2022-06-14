@@ -277,7 +277,7 @@
 
 
                 <time class="article-time--reading">
-                    11 minute read
+                    12 minute read
                 </time>
             </div>
         
@@ -318,7 +318,7 @@
 </ul>
 <p>In this literature review, we will be looking at a papers that focus on solving these challenges called <strong>ALPRO</strong> by Salesforce Research, which focuses on solving the misalignment problem through a <em>video-text contrastive</em> (VTC) loss and &ldquo;lack of fine-grained information&rdquo; problem through a <em>prompting entity modeling</em> (PEM) pretraining task.</p>
 <h2 id="introduction">Introduction</h2>
-<p>AlPRO first focuses on creating representations for the text and video independently (called <strong>unimodal encoding</strong>) and then combining these representations with a multimodal encoder to capture the interactions between the two. To make sure that the representations of the video and text align well before being sent to the encoder, a video-text contrastive loss, which pushes the representations of the similar texts and video to be closer to each other and vice-versa. To capture fine-grained visual information, AlPRO uses a prompting entity modeling (PEM) pretraining objective, where the model is asked to predict the objects/nouns (called <strong>entities</strong>) from random crops that are extracted from the video. Since the labels for these entities are not available, a <em>entity prompter</em> module is added to create &ldquo;pseudo-labels&rdquo; as proxies for the true labels. These pseudo-labels are essentially similarity scores between the random crops and a set of sentences (called <strong>prompts</strong>) of the form &ldquo;A video of {entity}&rdquo;, where these entities are sampled from nouns that were found in the pretraining data (called <strong>corpus</strong>).</p>
+<p>AlPRO first focuses on creating representations for the text and video independently (called <strong>unimodal encoding</strong>) and then combining these representations with a multimodal encoder to capture the interactions between the two. To make sure that the representations of the video and text align well before being sent to the encoder, the model uses a video-text contrastive loss, which pushes the representations of the similar texts and video to be closer to each other and vice-versa. To capture fine-grained visual information, AlPRO uses a prompting entity modeling (PEM) pretraining objective, where the model is asked to predict the objects/nouns (called <strong>entities</strong>) from random crops that are extracted from the video. Since the labels for these entities are not available, a <em>entity prompter</em> module is added to create &ldquo;pseudo-labels&rdquo; as proxies for the true labels. These pseudo-labels are essentially similarity scores that it calculates between the random crops and a set of sentences (called <strong>prompts</strong>) of the form &ldquo;A video of {entity}&rdquo;. These entities in its &ldquo;dictionary&rdquo; are sampled from nouns that were found in the pretraining data (called <strong>corpus</strong>).</p>
 <p><img src="/p/video-and-language-pre-training-with-alpro/images/alpro-example.png"
 	width="553"
 	height="595"
@@ -340,7 +340,7 @@
 <li>Each frame is split into $K$ patches which are then encoded to produce representations for each patch. For example, in the image below we can see that $K = 16$.</li>
 <li>Similar to standard transformers, <strong>positional embeddings</strong> are also created so that the model is aware of the position of different patches in the image (since the position and content of the patch both convey important information). For example, the model needs to understand that the patch showing &ldquo;fingers&rdquo; is close to the patch showing &ldquo;hand&rdquo;.</li>
 <li>Temporal and spatial attention is then performed to create $K \times d$ features for each frame. The way this is done is shown below. Think of <strong>attention</strong> as an &ldquo;information sharing&rdquo; mechanism between patches in the same frame or across frames where patches choose which other patches they want to receive information from. <strong>Space attention</strong> means that information can only be shared between patches in the same frame and not across frames. <strong>Joint space-time attention</strong> means that information can shared between every patch in every frame. However, to improve efficiency, <strong>Divided space-time attention</strong>, which the TimeSformer uses, means that information can be shared between a particular patch and every patch in the same frame (just like space attention) but also the same patch in all other frames.</li>
-<li>The features are then averaged across frames to create a single $K \times d$ vector for the whole video. Other than this $K \times d$ vector, similar to other transformers, a representation for the [CLS] token is added which can receive information from all the patches in the video across all frames and thus can be seen as a representation for the entire video.</li>
+<li>The features are then averaged across frames to create a single $K \times d$ vector for the whole video. Other than this $K \times d$ vector, similar to other transformers, a representation for the [CLS] token is added which can receive information from all the patches in the video across all frames and thus can be seen as a single $d$-dimensional representation for the entire video.</li>
 </ol>
 <p><img src="/p/video-and-language-pre-training-with-alpro/images/timesformer-attention.png"
 	width="600"
@@ -375,10 +375,10 @@
 <h3 id="pretraining">Pretraining</h3>
 <p>ALPRO is trained on four objectives, including two traditional ones such as <strong>masked language modeling</strong> (MLM) and <strong>video-text matching</strong> (VTM)</p>
 <ul>
-<li>In MLM, the model is asked to predicted masked text token; specifically, certain tokens in a sentence are replaced with [MASK] and the model is asked to predict what the original token was.</li>
-<li>In VTM, the model is asked whether a video and text description are matching or not. Here, the [CLS] token of the multimodal representation is used (as it is a $d$-dimensional vector that represents both the video and text). To get video-text pairs that aren&rsquo;t matching (also known as <strong>negative samples</strong>), random videos and pieces of text are sampled from the training data. Specifically, <strong>hard negatives</strong> are sampled through several ways so that the model finds it challenging to distinguish positive video-text pairs from negative ones, thus making it better over time.</li>
+<li>In MLM, the model is asked to predict text tokens that are masked out; specifically, certain tokens in a sentence are replaced with [MASK] and the model is asked to predict what the original token was.</li>
+<li>In VTM, the model is asked whether a video and text description are matching or not. Here, the [CLS] token of the multimodal representation is used (as it is a $d$-dimensional vector that represents both the video and text). To get video-text pairs that aren&rsquo;t matching (also known as <strong>negative samples</strong>), random videos and pieces of text are sampled from the training data. Specifically, <strong>hard negatives</strong> are sampled through several ways so that the model finds it challenging to distinguish positive video-text pairs from negative ones, rather than just randomly sampling videos and pieces of text where it is easy for the model to figure out that the video and text are not matching.</li>
 </ul>
-<p>We will focus on the novel objectives introduced: the video-text contrastive (VTC) loss and prompting entity-modeling (PEM) losses.</p>
+<p>We will now focus on the novel objectives introduced: the video-text contrastive (VTC) loss and prompting entity-modeling (PEM) losses.</p>
 <h4 id="video-text-contrastive-loss-vtc">Video-Text Contrastive Loss (VTC)</h4>
 <ol>
 <li>
@@ -390,19 +390,19 @@
 <li>
 <p>The video-text contrastive loss consists of two terms, both of which use these similarity scores.</p>
 <ol>
-<li>Firstly, a single video $V_i$ is compared to several pieces of text $T$ and we want to encourage the representation for $V_i$ to be similar to the most similar instance of text in $T$ which we will denote as $T_i$. Below, we can see that we&rsquo;re comparing the similarity score of $(V_i, T_i)$ to the similarity scores for all other text $T_j$ in the batch through what is known as the <strong>softmax</strong> function and then the logarithm is applied. $\tau$ is often known as the <strong>temperature</strong> and scales the objective to better learn from the hard negatives.</li>
+<li>Firstly, a single video $V_i$ is compared to several pieces of text $T$ and we want to encourage the representation for $V_i$ to be similar to its most similar instance of text in $T$ which we will denote as $T_i$. Below, we can see that we&rsquo;re comparing the similarity score of $(V_i, T_i)$ to the similarity scores for all other text $T_j$ in the batch through what is known as the <strong>softmax</strong> function and then the logarithm is applied. $\tau$ is often known as the <strong>temperature</strong> and scales the objective to better learn from the hard negatives.</li>
 </ol>
 <p>$$ L_{v2t} = -\log \frac{exp(s(V_i, T_i)/\tau)}{\sum_j exp(s(V_i, T_j)/\tau)} $$</p>
 <p><em>Equation 1: First Component of Video-Text Contrastive Loss where a single video is compared to several pieces of text</em></p>
 <ol start="2">
-<li>Similarly, a single piece of text $T_i$ is compared to several pieces of video $V$ and we want to encourage the representation for $T_i$ to be similar to the most similar instance of video in $V$ which we will denote as $V_i$.</li>
+<li>Similarly, a single piece of text $T_i$ is compared to several pieces of video $V$ and we want to encourage the representation for $T_i$ to be similar to its most similar instance of video in $V$ which we will denote as $V_i$.</li>
 </ol>
 <p>$$ L_{t2v} = -\log \frac{exp(s(T_i, V_i)/\tau)}{\sum_j exp(s(T_i, V_j) / \tau)} $$</p>
 <p><em>Equation 2: Second Component of Video-Text Contrastive Loss where a single text is compared to several pieces of video</em></p>
 </li>
 </ol>
 <h4 id="prompting-entity-modeling-pem-loss">Prompting Entity-Modeling (PEM) Loss</h4>
-<p>Note that the entity prompter has a similar architecture to the video-language pre-training model without the multimodal video-text encoder as shown below. In other words, the visual and text encoders and the VTC loss are used to create the entity prompter as well.</p>
+<p>Firstly, note that the entity prompter has a similar architecture to the video-language pre-training model without the multimodal video-text encoder as shown below. In other words, the visual and text encoders and the VTC loss are also used to create the entity prompter.</p>
 <p><img src="/p/video-and-language-pre-training-with-alpro/images/entity-prompter.png"
 	width="451"
 	height="177"
@@ -419,14 +419,14 @@
 <ol>
 <li>The entity prompter maintains a list of $M$ text entity prompts as explained above of the form &ldquo;A video of {Entity}&rdquo;. The entities are gathered by using a POS (part-of-speech) tagger and using the top 1,000 most frequent entities in the dataset.</li>
 <li>For each of these prompts, the [CLS] token is pre-computed to be used later.</li>
-<li>To generate the pseudo labels, we create random video crops $\hat{V}$ of the video and the corresponding [CLS] embedding from the video embedder. Note that only crops that occupy 30-50% of the original spatial area of the frame are included.</li>
+<li>To generate the pseudo labels, we create random video crops $\hat{V}$ of the video and the corresponding [CLS] embedding using the visual encoder. Note that only crops that occupy 30-50% of the original spatial area of the frame are used.</li>
 <li>Next, we create the pseudo-label by finding the normalized similarity between the the crop [CLS] token $\hat{v_{cls}}$ and the prompt [CLS] tokens $t_{cls}$, with a formula similar to the contrastive-losses presented above. In other words, we are measuring the similarity between the random crop and the prompts in our &ldquo;dictionary&rdquo;. Note that only pseudo-labels that are above a certain threshold (0.2) are included in the calculations; in other words, we only include prompts that are &ldquo;similar enough&rdquo; to the crop that we have taken.</li>
 </ol>
 <p>$$ q_{\hat{V}, m} = \frac{exp(s(\hat{V}, T_m) / \tau)}{\sum_m exp(s(\hat{V}, T_m) / \tau)} $$</p>
 <p><em>Equation 3: Formula for the pseudo-labels for the entity prompter</em></p>
 <ol start="5">
 <li>During pre-training, we take the embeddings from the multimodal encoder corresponding to the specific video crop and average them to create a single $d$-dimensional vector and then feed them to a classifier to compute the entity prediction $p_{\hat{V}}$. This is done similarly as above except we don&rsquo;t use the similarity scores calculated by the entity prompter but the embeddings directly produced by the multimodal encoder.</li>
-<li>Next, a <strong>cross-entropy</strong> loss between $p_{\hat{V}}$ and $q_{\hat{V}}$ is used as our final loss. Note that the cross-entropy loss encourages the two distributions (and accordingly, vectors) $p$ and $q$ to be as similar as possible as the term grows larger when there&rsquo;s an inconsistency between $p$ and $q$ (we predict a different label than the pseudo-label) and vice-versa.</li>
+<li>Next, a <strong>cross-entropy</strong> loss between $p_{\hat{V}}$ and $q_{\hat{V}}$ is used as our final loss. Note that the cross-entropy loss encourages the two distributions (and accordingly, vectors) $p$ and $q$ to be as similar as possible as the term grows larger when there&rsquo;s an inconsistency between $p$ and $q$ (we predict a different label than the pseudo-label) and vice-versa. In other words, we want our video-language pre-training model to find the same prompts similar to a particular video crop as the entity prompter does, and this is accomplished through the loss function shown below.</li>
 </ol>
 <p>$$ L_{PEM} = -\sum_m q_{\hat{V}, m} \log p_{\hat{V}, m} $$</p>
 <p><em>Equation 4: PEM loss which is simply cross-entropy between the pseudo-labels and the video-text model&rsquo;s predictions for the entities</em></p>
