@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Navigation on Beyond the Buzz</title>
+        <link>http://deidnani.github.io/tags/navigation/</link>
+        <description>Recent content in Navigation on Beyond the Buzz</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 18 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/navigation/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Transfer Learning for Visual Navigation</title>
+        <link>http://deidnani.github.io/p/transfer-learning-for-visual-navigation/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/p/transfer-learning-for-visual-navigation/</guid>
+        <description>&lt;h2 id=&#34;motivation&#34;&gt;Motivation&lt;/h2&gt;
+&lt;p&gt;In the task of visual navigation, an agent (often a robot) has to move around in an environment to reach a goal, only by using its camera to explore the environment and accordingly avoid obstacles. This task is important in several applications such as to build service robots at home, search and rescue robots, assistive technology for the visually impaired, or AR applications. 
+Many examples of this task exist such as:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PointNav: An agent is asked to go to a specific (x,y) location in the environment&lt;/li&gt;
+&lt;li&gt;ObjectNav: The agent must find an object by its name and go to it&lt;/li&gt;
+&lt;li&gt;RoomNav: The agent is asked to go to a specific room in the environment&lt;/li&gt;
+&lt;li&gt;AudioNav: The agent must find a specific sound (such as a telephone that is ringing) and then go to it&lt;/li&gt;
+&lt;li&gt;ImageNav: The agent must find where a specific image was taken and then go to it&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/object_nav.gif&#34;
+	width=&#34;852&#34;
+	height=&#34;480&#34;
+	srcset=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/object_nav_hu4490c01c2a979b3438430d46338cb8ee_1006882_480x0_resize_box.gif 480w, http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/object_nav_hu4490c01c2a979b3438430d46338cb8ee_1006882_1024x0_resize_box.gif 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;177&#34;
+		data-flex-basis=&#34;426px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 1: An example of one of the tasks in visual navigation called ObjectNav&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;In the past, researchers have developed models that are specific to each task, often trained with reinforcement learning. At a high level, reinforcement learning involves training an agent to observe the environment state and to take actions that will maximize its reward (which is often a function provided by the researcher). The model/algorithm that decides which action to take is often called a &lt;strong&gt;policy&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;problems-with-a-task-specific-approach&#34;&gt;Problems with a Task-Specific Approach&lt;/h2&gt;
+&lt;p&gt;However, this task-specific approach is not ideal due to the following reasons:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;If we are using such an approach, we need access to environments for each of these specific tasks which may not always be available. Even with the use of simulations and computer-generated, photorealistic environments that may be available, typically days/weeks are required using several GPUs to train the model.&lt;/li&gt;
+&lt;li&gt;Such an approach is not generalizable to other tasks as it is unable to learn skills that are shared across all tasks.&lt;/li&gt;
+&lt;li&gt;Some tasks such as ObjectNav require manual annotations such as object labels, which limits the amount of data that can be collected (and manual annotations introduce additional error in the process as well).&lt;/li&gt;
+&lt;li&gt;Such models cannot be used in a &amp;ldquo;lifelong learning&amp;rdquo; setup, where an agent will face new tasks that it has not seen before and must be able to solve them with none or limited training data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This work focuses on learning skills that can be shared across all these tasks. One example the authors provide is that if an agent finds a microwave for the ObjectNav task, then finding the kitchen should be easy as well for the RoomNav task. They propose a modular transfer learning approach for visual navigation that enables zero-shot experience learning. This essentially means that they train a single model that can be &amp;ldquo;transferred&amp;rdquo; to all these tasks (called &lt;strong&gt;transfer learning&lt;/strong&gt;) easily without requiring data for each individual task (called &lt;strong&gt;zero-shot experience learning&lt;/strong&gt;). Their model works in the following manner:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The model is trained to learn a general semantic search policy: specifically, they create a model to solve the &lt;strong&gt;image-goal task&lt;/strong&gt; which is essentially the ImageNav task presented above. The authors use this task rather than the other tasks listed above as it requires no annotations, and it is easy to produce a lot of data as we can just collect images and locations as the robot/agent is moving around the environment.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Joint goal embeddings&lt;/strong&gt; are created for each of the different tasks. In other words, beyond just creating representations for images that can be used for the ImageNav, we will try to use these representations to create representations for other tasks such as representations for object labels for ObjectNav, representations for sounds for AudioNav, etc.&lt;/li&gt;
+&lt;li&gt;Directly use these embeddings for each of the different tasks either in a &lt;strong&gt;zero-shot&lt;/strong&gt; manner (where new training data is provided for the new task) or &lt;strong&gt;fine-tune&lt;/strong&gt; the model when limited data is provided (means use the new data to make the model &amp;ldquo;more accurate&amp;rdquo;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/introduction.png&#34;
+	width=&#34;589&#34;
+	height=&#34;514&#34;
+	srcset=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/introduction_hu308f8ce61c65bf6fac4fdeeb8b5837ad_410999_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/introduction_hu308f8ce61c65bf6fac4fdeeb8b5837ad_410999_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;114&#34;
+		data-flex-basis=&#34;275px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 2: A visual depicting the ability for the model presented to be used towards several different tasks such as finding a potted plant, water dripping, a bed based on its sketch, or the living room&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;deep-dive&#34;&gt;Deep Dive&lt;/h2&gt;
+&lt;h3 id=&#34;semantic-search-policy-for-image-goals&#34;&gt;Semantic Search Policy for Image Goals&lt;/h3&gt;
+&lt;h4 id=&#34;problem-description&#34;&gt;Problem Description&lt;/h4&gt;
+&lt;p&gt;The ImageNav problem is specifically formulated as follows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The agent starts at a random position $p_0$ in an environment and is asked to find location $p_G$ given image $I_G$.&lt;/li&gt;
+&lt;li&gt;At each time step, the agent receives an image $o_t$ in RGB and needs to choose an action out of the following possible actions: move forward, turn left, turn right, or stop so that it can reach the goal before $S$ time steps have passed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;reward-function-view-reward&#34;&gt;Reward Function (View Reward)&lt;/h4&gt;
+&lt;p&gt;An intuitive function would be to reward the agent for getting closer to the goal and to make sure that it stops within a specific distance $d_s$ of the goal by using the distance between its current position $p_t$ and the goal $p_G$. However, this reward doesn&amp;rsquo;t help the agent reach &lt;strong&gt;semantic understanding&lt;/strong&gt; as it doesn&amp;rsquo;t provide any reward/incentive for the agent being able to understand the image. For example, on the way to reaching a goal such as an oven, the current reward function would not penalize the agent if it turned around and looked at other objects such as a book.&lt;/p&gt;
+&lt;p&gt;To solve this problem, the authors propose also rewarding the agent if it looks in the direction of the image $I_G$ when reaching the goal position $p_G$. 
+$$ r_t = r_d(d_t, d_{t-1}) + [d_t \leq d_s] r_{\alpha} (\alpha_t, \alpha_{t-1}) - \gamma $$&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Equation 1: Formula for the reward function used to train the semantic search policy&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Let us look at each of the components of this reward in detail:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$r_d$ represents how much closer the agent is to the goal than it was at the previous time step in terms of distance&lt;/li&gt;
+&lt;li&gt;$r_\alpha$ represents how close the current facing angle of the agent is to the camera angle of the goal image $I_g$ in radians&lt;/li&gt;
+&lt;li&gt;$[d_t \leq d_s]$ is an example of what is called an &lt;strong&gt;indicator&lt;/strong&gt; function, which means that the reward $r_{\alpha}$ is only provided when the robot is close enough to the goal (when the distance from the goal $d_t$ is less than or equal to some parameter $d_s = 1$)&lt;/li&gt;
+&lt;li&gt;$\gamma = 0.01$ represents &lt;strong&gt;slack&lt;/strong&gt; and encourages the agent to move towards the goal as quickly as possible.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The final reward of 10 is provided  when the agent is within $d_s$ of the goal and $a_s$ radians from the camera angle of the goal image $I_g$ as shown below:&lt;/p&gt;
+&lt;p&gt;$$ R_s = 5 \times ([d_t \leq d_s] + [d_t \leq d_s \text{ and } \alpha_t \leq \alpha_s]) $$ 
+&lt;em&gt;Equation 2: Formula for the final reward given at the end of the training sequence&lt;/em&gt;&lt;/p&gt;
+&lt;h4 id=&#34;view-augmentations&#34;&gt;View Augmentations&lt;/h4&gt;
+&lt;p&gt;In machine learning, &lt;strong&gt;augmentations&lt;/strong&gt; are essentially synthetic data points created in addition to the training data so that more data is available to train the model. Here, instead of using the same fixed goal image $I_G$ for each training sequence (or &lt;strong&gt;episode&lt;/strong&gt;), the authors sample a random camera angle to produce a new $I_G$ for each training episode. This helps the model focus more on the images provided rather than the goal position $p_G$ and will help the model learn which objects are close to each other in the environment without constructing a map for the environment.&lt;/p&gt;
+&lt;p&gt;For example, suppose in one training episode, the agent was asked to find chairs and saw the chairs from the viewpoint of the kitchen. In a later training episode, the agent will be asked to find the same chairs but will now see them from the viewpoint of the rest of the dining table. The augmentations would help the agent understand that the dining table is close to the kitchen, which would help it in later training episodes.&lt;/p&gt;
+&lt;h4 id=&#34;policy-training&#34;&gt;Policy Training&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;To train the policy, the authors use a model to represent the image observations at each timestep $o_t$ called the observation encoder and a separate model to represent the goal image $I_G$ called the image-goal encoder.&lt;/li&gt;
+&lt;li&gt;As its state, the semantic search policy uses the current image observation $o_t$ as well as prior image observations $o_1&amp;hellip;o_{t-1}$ and then uses an &lt;strong&gt;actor-critic&lt;/strong&gt; setup to pick the best action $a_t$ to maximize its rewards (explained above). At a high level, in an actor-critic setup, the actor decides which action to take given the current state $s_t$ and the critic decides how good the action $a_t$ was and informs the actor how it should change to pick better actions.&lt;/li&gt;
+&lt;li&gt;The algorithm used to train this policy is called &lt;strong&gt;Proximal Policy Optimization&lt;/strong&gt; (PPO). PPO focuses on trying to improve the policy as much as possible without taking &amp;ldquo;a step too far&amp;rdquo; leading to degradation in performance (more details can be found in the &amp;ldquo;Links&amp;rdquo; section below).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/semantic_search_policy.png&#34;
+	width=&#34;561&#34;
+	height=&#34;286&#34;
+	srcset=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/semantic_search_policy_hub386373bb7de54d16bcf59d552684bca_100981_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/semantic_search_policy_hub386373bb7de54d16bcf59d552684bca_100981_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;196&#34;
+		data-flex-basis=&#34;470px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 3: An outline of architecture of the semantic search policy as well as the reward function used to train it&lt;/em&gt;&lt;/p&gt;
+&lt;h3 id=&#34;joint-goal-embedding-learning&#34;&gt;Joint Goal Embedding Learning&lt;/h3&gt;
+&lt;p&gt;Our next goal is to use the image-goal encoder $f_G^I$ to help create representations for the goals presented for different tasks. Specifically, we want to create a embedding (or representation) space that understands relationships and similarities between the images that we trained the policy on and other representations of goals such as sketches, object labels, audio, etc.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/joint_embedding.png&#34;
+	width=&#34;396&#34;
+	height=&#34;307&#34;
+	srcset=&#34;http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/joint_embedding_hu46b17234ac2ad832adec87407353b133_48620_480x0_resize_box_3.png 480w, http://deidnani.github.io/p/transfer-learning-for-visual-navigation/images/joint_embedding_hu46b17234ac2ad832adec87407353b133_48620_1024x0_resize_box_3.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;128&#34;
+		data-flex-basis=&#34;309px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Figure 3: A visual depicting the joint embedding space we are trying to create&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;For example, let&amp;rsquo;s explore how we can use the image-goal encoder to create good representations for the object labels in the ObjectNav task. Note that this technique can be extended towards any other task: for example, for AudioNav, we will try to create good representations for the audio clips, rather than the object labels that we used for the ObjectNav task.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;First, for each of the object labels in the dataset, we need to add corresponding images. Only about 20K of these pairs are needed, which is much smaller than the amount of data points needed to train a task-specific model from scratch. Formally, we represent our dataset as image/goal pairs $D = {(x_i, g_i)}$ where $x_i$ is the goal images we used previously and $g_i$ are the object labels in this example.&lt;/li&gt;
+&lt;li&gt;Next, we focus on creating the embedding space by minimizing the following loss function:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$\mathcal{L}(x_i, g_i) = \begin{cases} 1 - \cos(f_G^I(x_i), f_G^M(g_i)) &amp;amp; y_i = 1 \\ \max(0, \cos(f_G^I(x_i), f_G^M(g_i))) &amp;amp; y_i = -1 \end{cases}$$
+&lt;em&gt;Equation 3: Loss function used to craete the joint-goal embedding space&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s look at the each of the components of this loss function in detail:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Here, $f_G^M$ is the new goal encoder of modality $M$ that we are trying to create. In our example, the modality $M$ is text (as we are using the object labels) and $f_G^M$ will be used to create representations for the object labels that we will use to train a policy to solve the ObjectNav task.&lt;/li&gt;
+&lt;li&gt;$\cos(\cdot,\cdot)$ is used to find the similarity between the representation of the goal image produced by the image-goal encoder and the representation of the object label produced by the modality-specific goal encoder $f_G^M$. For example, this will check how similar the representation for the label &amp;ldquo;chair&amp;rdquo; produced by $f_G^M$ is to the representation of the image of a chair produced by $f_G^I$.&lt;/li&gt;
+&lt;li&gt;This loss function will be used to push these representations closer to each other (when $y_i = 1$) when the underlying object label and goal image are similar and push them further apart when the underlying object label and goal image are different. So, looking at the previous example, we want the repesentation for the label &amp;ldquo;chair&amp;rdquo; to be pushed toward the representation for the image of a chair but away from representations for images of a lamp, for example.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Now, all we have to do is swap out our image-goal encoder $f_G^I$ for the modality-specific goal encoder we constructed $f_G^M$ in the architecture of the semantic search policy outlined in Figure 3 and we can now solve the ObjectNav task as well!&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;experiments&#34;&gt;Experiments&lt;/h2&gt;
+&lt;h3 id=&#34;image-goal-navigation&#34;&gt;Image-Goal Navigation&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;First, the authors evaluated the main task that the model was trained to solve: ImageNav. They found that the model outperforms previous baselines by a significant baseline, tending to be 6.6% more successful and taking 2.6% less steps to solve the task.&lt;/li&gt;
+&lt;li&gt;The authors also find that removing the view reward or view augmentation led to degradations in performance the model worked best when both techniques worked together. Even under noisy environments, the model was able to solve the task better than other baselines.&lt;/li&gt;
+&lt;li&gt;The authors also tested whether their model could be extended towards different image datasets with more diversity or with more complex, larger scenes. Although this did lead to a degradation in performance as expected, the authors found that the model could be extended towards these other datasets more effectively compared to the other baselines.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;transfer-to-downstream-tasks&#34;&gt;Transfer to Downstream Tasks&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Next, the authors evaluated the model&amp;rsquo;s ability to transfer to other navigation tasks such as RoomNav, ObjectNav, and ViewNav.&lt;/li&gt;
+&lt;li&gt;The authors found that their approach outperforms all other baselines by a significant margin and that methods that did not rely on a large amount of annotated data for the target task (for example, their approach) performed as well as the methods that did. Each episode also starts with a higher reward and improves faster, leading to the model being 12.5x faster than the fastest baseline.&lt;/li&gt;
+&lt;li&gt;In addition, the authors find that training on ImageNav first and then transferring to other tasks leads to up to 15% gains in success across the tasks than training on other tasks first such as PointNav.&lt;/li&gt;
+&lt;li&gt;Even in the zero-shot setting (when no data is provided for these tasks), the authors found that the model is surprisingly more effective than other models that were provided this data. Other approaches that also similarly try to transfer to these tasks and task-specific models are both able to reach a similar level of success but require much significantly more steps to train.&lt;/li&gt;
+&lt;li&gt;The authors also test only transferring over the policy $\pi$ or the observation encoder $f_O$ or training them from scratch for the new task but find that the model learns best when both components are transferred and not trained from scratch.&lt;/li&gt;
+&lt;li&gt;Finally, the authors find that the performance on the target task improves when more data is provided for the ImageNav task that the model is trained on.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

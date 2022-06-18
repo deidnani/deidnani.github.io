@@ -3,27 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://deidnani.github.io/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://deidnani.github.io/categories/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/multimodal/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/navigation/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/categories/paper-deep-dive/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/post/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/rl/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/robotics/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/tags/transfer-learning/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://deidnani.github.io/p/transfer-learning-for-visual-navigation/</loc>
+    <lastmod>2022-06-18T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://deidnani.github.io/tags/cv/</loc>
     <lastmod>2022-06-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://deidnani.github.io/tags/multimodal/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://deidnani.github.io/tags/nlp/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://deidnani.github.io/categories/paper-deep-dive/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://deidnani.github.io/post/</loc>
-    <lastmod>2022-06-11T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://deidnani.github.io/tags/</loc>
     <lastmod>2022-06-11T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://deidnani.github.io/p/video-and-language-pre-training-with-alpro/</loc>
@@ -43,9 +58,6 @@
   </url><url>
     <loc>http://deidnani.github.io/page/</loc>
     <lastmod>2020-06-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://deidnani.github.io/tags/rl/</loc>
-    <lastmod>2022-06-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://deidnani.github.io/archives/</loc>
     <lastmod>2019-05-28T00:00:00+00:00</lastmod>

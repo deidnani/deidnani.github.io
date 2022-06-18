@@ -6,20 +6,52 @@
         <description>Recent content in Tags on Beyond the Buzz</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 11 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 18 Jun 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://deidnani.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Multimodal</title>
+        <link>http://deidnani.github.io/tags/multimodal/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/multimodal/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Navigation</title>
+        <link>http://deidnani.github.io/tags/navigation/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/navigation/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>RL</title>
+        <link>http://deidnani.github.io/tags/rl/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/rl/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Robotics</title>
+        <link>http://deidnani.github.io/tags/robotics/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/robotics/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Transfer Learning</title>
+        <link>http://deidnani.github.io/tags/transfer-learning/</link>
+        <pubDate>Sat, 18 Jun 2022 00:00:00 +0000</pubDate>
+        
+        <guid>http://deidnani.github.io/tags/transfer-learning/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>CV</title>
         <link>http://deidnani.github.io/tags/cv/</link>
         <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
         
         <guid>http://deidnani.github.io/tags/cv/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>Multimodal</title>
-        <link>http://deidnani.github.io/tags/multimodal/</link>
-        <pubDate>Sat, 11 Jun 2022 00:00:00 +0000</pubDate>
-        
-        <guid>http://deidnani.github.io/tags/multimodal/</guid>
         <description></description>
         </item>
         <item>
@@ -36,14 +68,6 @@
         <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
         
         <guid>http://deidnani.github.io/tags/lfd/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>RL</title>
-        <link>http://deidnani.github.io/tags/rl/</link>
-        <pubDate>Wed, 01 Jun 2022 00:00:00 +0000</pubDate>
-        
-        <guid>http://deidnani.github.io/tags/rl/</guid>
         <description></description>
         </item>
         

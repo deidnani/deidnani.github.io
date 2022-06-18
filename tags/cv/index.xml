@@ -194,7 +194,7 @@
 &lt;p&gt;&lt;em&gt;Figure 7: Examples of the pseudo-labels produced for an image&lt;/em&gt;&lt;/p&gt;
 &lt;h3 id=&#34;ablations&#34;&gt;Ablations&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Through ablations, authors find using multiple prompts (or templates) other than  just the single template of &amp;ldquo;A video of a {Entity}&amp;rdquo; such as &amp;ldquo;A footage of one {Entity}&amp;rdquo; leads to additional gains in performance.&lt;/li&gt;
+&lt;li&gt;Through ablations, authors find using multiple prompts (or templates) other than just the single template of &amp;ldquo;A video of a {Entity}&amp;rdquo; such as &amp;ldquo;A footage of one {Entity}&amp;rdquo; leads to additional gains in performance.&lt;/li&gt;
 &lt;li&gt;Additionally, keeping the number of entities low enough so that only the most frequent entities are added to the &amp;ldquo;dictionary&amp;rdquo; seems to play an important role as well.&lt;/li&gt;
 &lt;li&gt;Keeping the number of frames low is also important as the authors find that increasing the number of frames up to 8 increases performance but limited gains are seen when the number of frames is increased beyond 8.&lt;/li&gt;
 &lt;li&gt;Through these ablations and other analyses, the authors plan to focus more on creating better prompts as well as using temporal information to select the crops in the videos in the near future.&lt;/li&gt;

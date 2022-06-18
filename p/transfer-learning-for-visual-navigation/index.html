@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='An exploration of using transfer learning to learn visual navigation policies for several tasks that was highlighted this week'><title>Transfer Learning for Visual Navigation</title>
+
+<link rel='canonical' href='http://deidnani.github.io/p/transfer-learning-for-visual-navigation/'>
+
+<link rel="stylesheet" href="/scss/style.min.450926226e724574a6b936335ea06111f8aeb253d932c86cb2cc807341cd2889.css"><meta property='og:title' content='Transfer Learning for Visual Navigation'>
+<meta property='og:description' content='An exploration of using transfer learning to learn visual navigation policies for several tasks that was highlighted this week'>
+<meta property='og:url' content='http://deidnani.github.io/p/transfer-learning-for-visual-navigation/'>
+<meta property='og:site_name' content='Beyond the Buzz'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Navigation' /><meta property='article:tag' content='RL' /><meta property='article:tag' content='Robotics' /><meta property='article:tag' content='Multimodal' /><meta property='article:tag' content='Transfer Learning' /><meta property='article:published_time' content='2022-06-18T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-06-18T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Transfer Learning for Visual Navigation">
+<meta name="twitter:description" content="An exploration of using transfer learning to learn visual navigation policies for several tasks that was highlighted this week">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/buzz_huf3e2923fc74d856fe9e9781dcbe93242_15437_300x0_resize_box_3.png" width="300"
+                            height="270" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Beyond the Buzz</a></h1>
+            <h2 class="site-description">A blog dedicated to exploring AI beyond the many buzzwords that have become commonplace in resumes today</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/deidnani'
+                        target="_blank"
+                        title="GitHub"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.linkedin.com/in/rajeidnani/'
+                        target="_blank"
+                        title="LinkedIn"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+   <line x1="8" y1="11" x2="8" y2="16"></line>
+   <line x1="8" y1="8" x2="8" y2="8.01"></line>
+   <line x1="12" y1="16" x2="12" y2="11"></line>
+   <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
+</svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+<main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/paper-deep-dive/" style="background-color: #2a9d8f; color: #fff;">
+                Paper Deep Dive
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/transfer-learning-for-visual-navigation/">Transfer Learning for Visual Navigation</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            An exploration of using transfer learning to learn visual navigation policies for several tasks that was highlighted this week
+        </h3>
+        
+    </div>
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jun 18, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    12 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="motivation">Motivation</h2>
+<p>In the task of visual navigation, an agent (often a robot) has to move around in an environment to reach a goal, only by using its camera to explore the environment and accordingly avoid obstacles. This task is important in several applications such as to build service robots at home, search and rescue robots, assistive technology for the visually impaired, or AR applications. 
+Many examples of this task exist such as:</p>
+<ul>
+<li>PointNav: An agent is asked to go to a specific (x,y) location in the environment</li>
+<li>ObjectNav: The agent must find an object by its name and go to it</li>
+<li>RoomNav: The agent is asked to go to a specific room in the environment</li>
+<li>AudioNav: The agent must find a specific sound (such as a telephone that is ringing) and then go to it</li>
+<li>ImageNav: The agent must find where a specific image was taken and then go to it</li>
+</ul>
+<p><img src="/p/transfer-learning-for-visual-navigation/images/object_nav.gif"
+	width="852"
+	height="480"
+	srcset="/p/transfer-learning-for-visual-navigation/images/object_nav_hu4490c01c2a979b3438430d46338cb8ee_1006882_480x0_resize_box.gif 480w, /p/transfer-learning-for-visual-navigation/images/object_nav_hu4490c01c2a979b3438430d46338cb8ee_1006882_1024x0_resize_box.gif 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+></p>
+<p><em>Figure 1: An example of one of the tasks in visual navigation called ObjectNav</em></p>
+<p>In the past, researchers have developed models that are specific to each task, often trained with reinforcement learning. At a high level, reinforcement learning involves training an agent to observe the environment state and to take actions that will maximize its reward (which is often a function provided by the researcher). The model/algorithm that decides which action to take is often called a <strong>policy</strong>.</p>
+<h2 id="problems-with-a-task-specific-approach">Problems with a Task-Specific Approach</h2>
+<p>However, this task-specific approach is not ideal due to the following reasons:</p>
+<ul>
+<li>If we are using such an approach, we need access to environments for each of these specific tasks which may not always be available. Even with the use of simulations and computer-generated, photorealistic environments that may be available, typically days/weeks are required using several GPUs to train the model.</li>
+<li>Such an approach is not generalizable to other tasks as it is unable to learn skills that are shared across all tasks.</li>
+<li>Some tasks such as ObjectNav require manual annotations such as object labels, which limits the amount of data that can be collected (and manual annotations introduce additional error in the process as well).</li>
+<li>Such models cannot be used in a &ldquo;lifelong learning&rdquo; setup, where an agent will face new tasks that it has not seen before and must be able to solve them with none or limited training data.</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>This work focuses on learning skills that can be shared across all these tasks. One example the authors provide is that if an agent finds a microwave for the ObjectNav task, then finding the kitchen should be easy as well for the RoomNav task. They propose a modular transfer learning approach for visual navigation that enables zero-shot experience learning. This essentially means that they train a single model that can be &ldquo;transferred&rdquo; to all these tasks (called <strong>transfer learning</strong>) easily without requiring data for each individual task (called <strong>zero-shot experience learning</strong>). Their model works in the following manner:</p>
+<ol>
+<li>The model is trained to learn a general semantic search policy: specifically, they create a model to solve the <strong>image-goal task</strong> which is essentially the ImageNav task presented above. The authors use this task rather than the other tasks listed above as it requires no annotations, and it is easy to produce a lot of data as we can just collect images and locations as the robot/agent is moving around the environment.</li>
+<li><strong>Joint goal embeddings</strong> are created for each of the different tasks. In other words, beyond just creating representations for images that can be used for the ImageNav, we will try to use these representations to create representations for other tasks such as representations for object labels for ObjectNav, representations for sounds for AudioNav, etc.</li>
+<li>Directly use these embeddings for each of the different tasks either in a <strong>zero-shot</strong> manner (where new training data is provided for the new task) or <strong>fine-tune</strong> the model when limited data is provided (means use the new data to make the model &ldquo;more accurate&rdquo;).</li>
+</ol>
+<p><img src="/p/transfer-learning-for-visual-navigation/images/introduction.png"
+	width="589"
+	height="514"
+	srcset="/p/transfer-learning-for-visual-navigation/images/introduction_hu308f8ce61c65bf6fac4fdeeb8b5837ad_410999_480x0_resize_box_3.png 480w, /p/transfer-learning-for-visual-navigation/images/introduction_hu308f8ce61c65bf6fac4fdeeb8b5837ad_410999_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="114"
+		data-flex-basis="275px"
+	
+></p>
+<p><em>Figure 2: A visual depicting the ability for the model presented to be used towards several different tasks such as finding a potted plant, water dripping, a bed based on its sketch, or the living room</em></p>
+<h2 id="deep-dive">Deep Dive</h2>
+<h3 id="semantic-search-policy-for-image-goals">Semantic Search Policy for Image Goals</h3>
+<h4 id="problem-description">Problem Description</h4>
+<p>The ImageNav problem is specifically formulated as follows:</p>
+<ul>
+<li>The agent starts at a random position $p_0$ in an environment and is asked to find location $p_G$ given image $I_G$.</li>
+<li>At each time step, the agent receives an image $o_t$ in RGB and needs to choose an action out of the following possible actions: move forward, turn left, turn right, or stop so that it can reach the goal before $S$ time steps have passed.</li>
+</ul>
+<h4 id="reward-function-view-reward">Reward Function (View Reward)</h4>
+<p>An intuitive function would be to reward the agent for getting closer to the goal and to make sure that it stops within a specific distance $d_s$ of the goal by using the distance between its current position $p_t$ and the goal $p_G$. However, this reward doesn&rsquo;t help the agent reach <strong>semantic understanding</strong> as it doesn&rsquo;t provide any reward/incentive for the agent being able to understand the image. For example, on the way to reaching a goal such as an oven, the current reward function would not penalize the agent if it turned around and looked at other objects such as a book.</p>
+<p>To solve this problem, the authors propose also rewarding the agent if it looks in the direction of the image $I_G$ when reaching the goal position $p_G$. 
+$$ r_t = r_d(d_t, d_{t-1}) + [d_t \leq d_s] r_{\alpha} (\alpha_t, \alpha_{t-1}) - \gamma $$</p>
+<p><em>Equation 1: Formula for the reward function used to train the semantic search policy</em></p>
+<p>Let us look at each of the components of this reward in detail:</p>
+<ul>
+<li>$r_d$ represents how much closer the agent is to the goal than it was at the previous time step in terms of distance</li>
+<li>$r_\alpha$ represents how close the current facing angle of the agent is to the camera angle of the goal image $I_g$ in radians</li>
+<li>$[d_t \leq d_s]$ is an example of what is called an <strong>indicator</strong> function, which means that the reward $r_{\alpha}$ is only provided when the robot is close enough to the goal (when the distance from the goal $d_t$ is less than or equal to some parameter $d_s = 1$)</li>
+<li>$\gamma = 0.01$ represents <strong>slack</strong> and encourages the agent to move towards the goal as quickly as possible.</li>
+</ul>
+<p>The final reward of 10 is provided  when the agent is within $d_s$ of the goal and $a_s$ radians from the camera angle of the goal image $I_g$ as shown below:</p>
+<p>$$ R_s = 5 \times ([d_t \leq d_s] + [d_t \leq d_s \text{ and } \alpha_t \leq \alpha_s]) $$ 
+<em>Equation 2: Formula for the final reward given at the end of the training sequence</em></p>
+<h4 id="view-augmentations">View Augmentations</h4>
+<p>In machine learning, <strong>augmentations</strong> are essentially synthetic data points created in addition to the training data so that more data is available to train the model. Here, instead of using the same fixed goal image $I_G$ for each training sequence (or <strong>episode</strong>), the authors sample a random camera angle to produce a new $I_G$ for each training episode. This helps the model focus more on the images provided rather than the goal position $p_G$ and will help the model learn which objects are close to each other in the environment without constructing a map for the environment.</p>
+<p>For example, suppose in one training episode, the agent was asked to find chairs and saw the chairs from the viewpoint of the kitchen. In a later training episode, the agent will be asked to find the same chairs but will now see them from the viewpoint of the rest of the dining table. The augmentations would help the agent understand that the dining table is close to the kitchen, which would help it in later training episodes.</p>
+<h4 id="policy-training">Policy Training</h4>
+<ul>
+<li>To train the policy, the authors use a model to represent the image observations at each timestep $o_t$ called the observation encoder and a separate model to represent the goal image $I_G$ called the image-goal encoder.</li>
+<li>As its state, the semantic search policy uses the current image observation $o_t$ as well as prior image observations $o_1&hellip;o_{t-1}$ and then uses an <strong>actor-critic</strong> setup to pick the best action $a_t$ to maximize its rewards (explained above). At a high level, in an actor-critic setup, the actor decides which action to take given the current state $s_t$ and the critic decides how good the action $a_t$ was and informs the actor how it should change to pick better actions.</li>
+<li>The algorithm used to train this policy is called <strong>Proximal Policy Optimization</strong> (PPO). PPO focuses on trying to improve the policy as much as possible without taking &ldquo;a step too far&rdquo; leading to degradation in performance (more details can be found in the &ldquo;Links&rdquo; section below).</li>
+</ul>
+<p><img src="/p/transfer-learning-for-visual-navigation/images/semantic_search_policy.png"
+	width="561"
+	height="286"
+	srcset="/p/transfer-learning-for-visual-navigation/images/semantic_search_policy_hub386373bb7de54d16bcf59d552684bca_100981_480x0_resize_box_3.png 480w, /p/transfer-learning-for-visual-navigation/images/semantic_search_policy_hub386373bb7de54d16bcf59d552684bca_100981_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="196"
+		data-flex-basis="470px"
+	
+></p>
+<p><em>Figure 3: An outline of architecture of the semantic search policy as well as the reward function used to train it</em></p>
+<h3 id="joint-goal-embedding-learning">Joint Goal Embedding Learning</h3>
+<p>Our next goal is to use the image-goal encoder $f_G^I$ to help create representations for the goals presented for different tasks. Specifically, we want to create a embedding (or representation) space that understands relationships and similarities between the images that we trained the policy on and other representations of goals such as sketches, object labels, audio, etc.</p>
+<p><img src="/p/transfer-learning-for-visual-navigation/images/joint_embedding.png"
+	width="396"
+	height="307"
+	srcset="/p/transfer-learning-for-visual-navigation/images/joint_embedding_hu46b17234ac2ad832adec87407353b133_48620_480x0_resize_box_3.png 480w, /p/transfer-learning-for-visual-navigation/images/joint_embedding_hu46b17234ac2ad832adec87407353b133_48620_1024x0_resize_box_3.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="128"
+		data-flex-basis="309px"
+	
+></p>
+<p><em>Figure 3: A visual depicting the joint embedding space we are trying to create</em></p>
+<p>For example, let&rsquo;s explore how we can use the image-goal encoder to create good representations for the object labels in the ObjectNav task. Note that this technique can be extended towards any other task: for example, for AudioNav, we will try to create good representations for the audio clips, rather than the object labels that we used for the ObjectNav task.</p>
+<ol>
+<li>First, for each of the object labels in the dataset, we need to add corresponding images. Only about 20K of these pairs are needed, which is much smaller than the amount of data points needed to train a task-specific model from scratch. Formally, we represent our dataset as image/goal pairs $D = {(x_i, g_i)}$ where $x_i$ is the goal images we used previously and $g_i$ are the object labels in this example.</li>
+<li>Next, we focus on creating the embedding space by minimizing the following loss function:</li>
+</ol>
+<p>$$\mathcal{L}(x_i, g_i) = \begin{cases} 1 - \cos(f_G^I(x_i), f_G^M(g_i)) &amp; y_i = 1 \\ \max(0, \cos(f_G^I(x_i), f_G^M(g_i))) &amp; y_i = -1 \end{cases}$$
+<em>Equation 3: Loss function used to craete the joint-goal embedding space</em></p>
+<p>Let&rsquo;s look at the each of the components of this loss function in detail:</p>
+<ul>
+<li>Here, $f_G^M$ is the new goal encoder of modality $M$ that we are trying to create. In our example, the modality $M$ is text (as we are using the object labels) and $f_G^M$ will be used to create representations for the object labels that we will use to train a policy to solve the ObjectNav task.</li>
+<li>$\cos(\cdot,\cdot)$ is used to find the similarity between the representation of the goal image produced by the image-goal encoder and the representation of the object label produced by the modality-specific goal encoder $f_G^M$. For example, this will check how similar the representation for the label &ldquo;chair&rdquo; produced by $f_G^M$ is to the representation of the image of a chair produced by $f_G^I$.</li>
+<li>This loss function will be used to push these representations closer to each other (when $y_i = 1$) when the underlying object label and goal image are similar and push them further apart when the underlying object label and goal image are different. So, looking at the previous example, we want the repesentation for the label &ldquo;chair&rdquo; to be pushed toward the representation for the image of a chair but away from representations for images of a lamp, for example.</li>
+</ul>
+<ol start="3">
+<li>Now, all we have to do is swap out our image-goal encoder $f_G^I$ for the modality-specific goal encoder we constructed $f_G^M$ in the architecture of the semantic search policy outlined in Figure 3 and we can now solve the ObjectNav task as well!</li>
+</ol>
+<h2 id="experiments">Experiments</h2>
+<h3 id="image-goal-navigation">Image-Goal Navigation</h3>
+<ul>
+<li>First, the authors evaluated the main task that the model was trained to solve: ImageNav. They found that the model outperforms previous baselines by a significant baseline, tending to be 6.6% more successful and taking 2.6% less steps to solve the task.</li>
+<li>The authors also find that removing the view reward or view augmentation led to degradations in performance the model worked best when both techniques worked together. Even under noisy environments, the model was able to solve the task better than other baselines.</li>
+<li>The authors also tested whether their model could be extended towards different image datasets with more diversity or with more complex, larger scenes. Although this did lead to a degradation in performance as expected, the authors found that the model could be extended towards these other datasets more effectively compared to the other baselines.</li>
+</ul>
+<h3 id="transfer-to-downstream-tasks">Transfer to Downstream Tasks</h3>
+<ul>
+<li>Next, the authors evaluated the model&rsquo;s ability to transfer to other navigation tasks such as RoomNav, ObjectNav, and ViewNav.</li>
+<li>The authors found that their approach outperforms all other baselines by a significant margin and that methods that did not rely on a large amount of annotated data for the target task (for example, their approach) performed as well as the methods that did. Each episode also starts with a higher reward and improves faster, leading to the model being 12.5x faster than the fastest baseline.</li>
+<li>In addition, the authors find that training on ImageNav first and then transferring to other tasks leads to up to 15% gains in success across the tasks than training on other tasks first such as PointNav.</li>
+<li>Even in the zero-shot setting (when no data is provided for these tasks), the authors found that the model is surprisingly more effective than other models that were provided this data. Other approaches that also similarly try to transfer to these tasks and task-specific models are both able to reach a similar level of success but require much significantly more steps to train.</li>
+<li>The authors also test only transferring over the policy $\pi$ or the observation encoder $f_O$ or training them from scratch for the new task but find that the model learns best when both components are transferred and not trained from scratch.</li>
+<li>Finally, the authors find that the performance on the target task improves when more data is provided for the ImageNav task that the model is trained on.</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/navigation/">Navigation</a>
+        
+            <a href="/tags/rl/">RL</a>
+        
+            <a href="/tags/robotics/">Robotics</a>
+        
+            <a href="/tags/multimodal/">Multimodal</a>
+        
+            <a href="/tags/transfer-learning/">Transfer Learning</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+        <div class="article-list--compact links">
+    
+        <article>
+            <a href="https://arxiv.org/pdf/2202.02440.pdf" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Zero Experience Required: Plug &amp; Play Modular Transfer Learning for Semantic Visual Navigation</h2>
+                    <footer class="article-time">
+                        
+                            More details on the paper explored in this deep dive which works to create a modular transfer learning setup that can be used in a &#34;plug-and-play&#34; manner towards several tasks
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/meta-research.jpg" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+        <article>
+            <a href="https://arxiv.org/pdf/1707.06347.pdf" target="_blank" rel="noopener">
+                <div class="article-details">
+                    <h2 class="article-title">Proximal Policy Optimization Algorithms</h2>
+                    <footer class="article-time">
+                        
+                            More details on PPO (Proximal Policy Optimization), an algorithm used in this paper to solve the reinforcement learning problem presented
+                        
+                    </footer>
+                </div>
+        
+                
+                    <div class="article-image">
+                        <img src="images/openai.png" loading="lazy">
+                    </div>
+                
+            </a>
+        </article>
+    
+</div>
+    
+
+    
+
+<aside class="related-contents--wrapper">
+    <h2 class="section-title">Related contents</h2>
+    <div class="related-contents">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/video-and-language-pre-training-with-alpro/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Video-and-Language Pre-Training with AlPRO</h2>
+        </div>
+    </a>
+</article>
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2022 Beyond the Buzz
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.11.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#motivation">Motivation</a></li>
+    <li><a href="#problems-with-a-task-specific-approach">Problems with a Task-Specific Approach</a></li>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#deep-dive">Deep Dive</a>
+      <ol>
+        <li><a href="#semantic-search-policy-for-image-goals">Semantic Search Policy for Image Goals</a>
+          <ol>
+            <li><a href="#problem-description">Problem Description</a></li>
+            <li><a href="#reward-function-view-reward">Reward Function (View Reward)</a></li>
+            <li><a href="#view-augmentations">View Augmentations</a></li>
+            <li><a href="#policy-training">Policy Training</a></li>
+          </ol>
+        </li>
+        <li><a href="#joint-goal-embedding-learning">Joint Goal Embedding Learning</a></li>
+      </ol>
+    </li>
+    <li><a href="#experiments">Experiments</a>
+      <ol>
+        <li><a href="#image-goal-navigation">Image-Goal Navigation</a></li>
+        <li><a href="#transfer-to-downstream-tasks">Transfer to Downstream Tasks</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
